@@ -1213,6 +1213,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e155d4e599f14d2a9a93310b88e340e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  redCubePrefab: {fileID: 8035106561568174542, guid: 2595144bab49c48a19ff74d440bed40e, type: 3}
+  greenCubePrefab: {fileID: 1434906747680100766, guid: e724016b7520c45e0b8b483b792a6252, type: 3}
+  blueCubePrefab: {fileID: 8413395281184060255, guid: 200689cc6b40a43c58aee15b9f3ac3a9, type: 3}
+  yellowCubePrefab: {fileID: 4250267182945713448, guid: 069a00d0ede094d3cb68efdbffdc6bee, type: 3}
+  rocketVPrefab: {fileID: 0}
+  rocketHPrefab: {fileID: 0}
+  boxPrefab: {fileID: 6189682718106115605, guid: e858b8c35718649c3ab1ca0d12467465, type: 3}
+  stonePrefab: {fileID: 0}
+  vasePrefab: {fileID: 0}
 --- !u!1 &1958963710
 GameObject:
   m_ObjectHideFlags: 0

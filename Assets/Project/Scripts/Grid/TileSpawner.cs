@@ -1,52 +1,54 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
 
 public class TileSpawner : MonoBehaviour
 {
-    private Dictionary<string, GameObject> loadedPrefabs = new();
+    [Header("Tile Prefabs")]
+    [SerializeField] private GameObject redCubePrefab;
+    [SerializeField] private GameObject greenCubePrefab;
+    [SerializeField] private GameObject blueCubePrefab;
+    [SerializeField] private GameObject yellowCubePrefab;
+    [SerializeField] private GameObject rocketVPrefab;
+    [SerializeField] private GameObject rocketHPrefab;
+    [SerializeField] private GameObject boxPrefab;
+    [SerializeField] private GameObject stonePrefab;
+    [SerializeField] private GameObject vasePrefab;
+
+    private Dictionary<string, GameObject> _prefabMap;
+
+    private void Awake()
+    {
+        _prefabMap = new Dictionary<string, GameObject>
+        {
+            { "r", redCubePrefab },
+            { "g", greenCubePrefab },
+            { "b", blueCubePrefab },
+            { "y", yellowCubePrefab },
+            { "vro", rocketVPrefab },
+            { "hro", rocketHPrefab },
+            { "bo", boxPrefab },
+            { "s", stonePrefab },
+            { "v", vasePrefab },
+        };
+    }
 
     public async Task<GameObject> Spawn(string key, Vector2 position, Transform parent)
     {
-        GameObject prefab = await LoadPrefab(key);
+        if (!_prefabMap.TryGetValue(key, out GameObject prefab) || prefab == null)
+        {
+            Debug.LogWarning($"[TileSpawner] No prefab found for key '{key}'");
+            return null;
+        }
+
         GameObject obj = GameManager.Instance.PoolManager.Get(key, prefab);
         obj.transform.SetParent(parent);
         obj.transform.position = position;
-        return obj;
-    }
-
-    private async Task<GameObject> LoadPrefab(string key)
-    {
-        if (!loadedPrefabs.TryGetValue(key, out GameObject prefab))
-        {
-            prefab = await Addressables.LoadAssetAsync<GameObject>(key).Task;
-            loadedPrefabs[key] = prefab;
-        }
-        return prefab;
+        return await Task.FromResult(obj);
     }
 
     public void Despawn(string key, GameObject obj)
     {
         GameManager.Instance.PoolManager.Return(key, obj);
-    }
-    
-    public async Task PreloadAll()
-    {
-        string[] keysToPreload = new[]
-        {
-            "red", "green", "blue", "yellow",
-            "vertical_rocket_0", "horizontal_rocket_0",
-            "box_0", "stone_0", "vase_01_0"
-        };
-
-        foreach (string key in keysToPreload)
-        {
-            if (!loadedPrefabs.ContainsKey(key))
-            {
-                GameObject prefab = await Addressables.LoadAssetAsync<GameObject>(key).Task;
-                loadedPrefabs[key] = prefab;
-            }
-        }
     }
 }

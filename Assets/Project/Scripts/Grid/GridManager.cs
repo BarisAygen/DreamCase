@@ -40,38 +40,18 @@ public class GridManager : MonoBehaviour
         await Task.WhenAll(spawnTasks);
     }
 
-    private async Task SpawnTile(string rawKey, int index, Vector2 origin)
+    private async Task SpawnTile(string key, int index, Vector2 origin)
     {
-        if (rawKey == "rand")
+        if (key == "rand")
         {
             var keys = new[] { "r", "g", "b", "y" };
-            rawKey = keys[Random.Range(0, keys.Length)];
+            key = keys[Random.Range(0, keys.Length)];
         }
-
-        string addressKey = TileKeyToAddress(rawKey);
-        if (string.IsNullOrEmpty(addressKey)) return;
 
         int x = index % _width;
         int y = index / _width;
         Vector2 pos = origin + new Vector2(x + 0.5f, y + 0.5f) * _tileSize;
 
-        await GameManager.Instance.TileSpawner.Spawn(addressKey, pos, gridParent);
-    }
-
-    private string TileKeyToAddress(string code)
-    {
-        return code switch
-        {
-            "r" => "red",
-            "g" => "green",
-            "b" => "blue",
-            "y" => "yellow",
-            "vro" => "vertical_rocket_0",
-            "hro" => "horizontal_rocket_0",
-            "bo" => "box_0",
-            "s" => "stone_0",
-            "v" => "vase_01_0",
-            _ => null
-        };
+        await GameManager.Instance.TileSpawner.Spawn(key, pos, gridParent);
     }
 }

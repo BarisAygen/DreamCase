@@ -18,11 +18,6 @@ public class LevelInitializer : MonoBehaviour
             yield break;
         }
 
-        // Preload tile prefabs
-        var preloadTask = GameManager.Instance.TileSpawner.PreloadAll();
-        while (!preloadTask.IsCompleted) yield return null;
-
-        // Init grid
         var gridTask = GameManager.Instance.GridManager.InitGrid(data);
         while (!gridTask.IsCompleted) yield return null;
     }
