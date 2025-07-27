@@ -3,26 +3,19 @@ using UnityEngine;
 public class Cube : MonoBehaviour
 {
     public Sprite defaultSprite;
-    public Sprite horizontalRocketSprite;
-    public Sprite verticalRocketSprite;
-
-    private RocketDirection rocketDirection = RocketDirection.None;
+    public Sprite rocketSprite;
     private SpriteRenderer sr;
 
     private void Awake() => sr = GetComponent<SpriteRenderer>();
 
-    public void SetRocketState(RocketDirection direction)
+    public void SetRocketState()
     {
-        rocketDirection = direction;
 
-        if (direction == RocketDirection.Horizontal)
-            sr.sprite = horizontalRocketSprite;
-        else if (direction == RocketDirection.Vertical)
-            sr.sprite = verticalRocketSprite;
+        if (false)
+        {
+            sr.sprite = rocketSprite;
+        }
         else
             sr.sprite = defaultSprite;
     }
-
-    public bool IsRocket() => rocketDirection != RocketDirection.None;
-    public RocketDirection GetDirection() => rocketDirection;
 }

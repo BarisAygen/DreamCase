@@ -17,7 +17,6 @@ public class Vase : MonoBehaviour
         }
         else if (health <= 0)
         {
-            // Destroy vase2
             Destroy(gameObject);
         }
     }

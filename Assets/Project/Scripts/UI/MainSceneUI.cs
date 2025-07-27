@@ -12,14 +12,26 @@ public class MainSceneUI : MonoBehaviour
     [SerializeField, Tooltip("Text that shows the current level number")]
     private TextMeshProUGUI levelText;
 
+    private const int MaxLevel = 10; // Currently max # of levels in game
+
     private void Start()
     {
         int level = PlayerPrefs.GetInt("LastLevel", 1);
-        levelText.text = level > 10 ? "Finished" : $"Level {level}";
+        if (levelText == null || levelButton == null)
+        {
+            Debug.LogError("UI references not assigned.");
+            return;
+        }
 
-        levelButton.onClick.AddListener(() =>
+        levelText.text = level > MaxLevel ? "Finished" : $"Level {level}"; // Modify level button accordingly
+    }
+    
+    public void OnLevelButtonClicked() // Change the scene and load the level
+    {
+        int level = PlayerPrefs.GetInt("LastLevel", 1);
+        if (level <= MaxLevel)
         {
             SceneManager.LoadScene("LevelScene");
-        });
+        }
     }
 }
