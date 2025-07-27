@@ -4,38 +4,43 @@ using UnityEngine;
 
 public class TileSpawner : MonoBehaviour
 {
-    [Header("Tile Prefabs")]
-    [SerializeField] private GameObject redCubePrefab;
-    [SerializeField] private GameObject greenCubePrefab;
-    [SerializeField] private GameObject blueCubePrefab;
-    [SerializeField] private GameObject yellowCubePrefab;
-    [SerializeField] private GameObject rocketVPrefab;
-    [SerializeField] private GameObject rocketHPrefab;
-    [SerializeField] private GameObject boxPrefab;
-    [SerializeField] private GameObject stonePrefab;
-    [SerializeField] private GameObject vasePrefab;
+    [System.Serializable]
+    public class TileEntry
+    {
+        public string key;            
+        public GameObject prefab;    
+    }
+
+    [Header("Tile Prefabs (key-prefab pairs)")]
+    [SerializeField] private List<TileEntry> tiles;
 
     private Dictionary<string, GameObject> _prefabMap;
 
     private void Awake()
     {
-        _prefabMap = new Dictionary<string, GameObject>
+        _prefabMap = new Dictionary<string, GameObject>();
+
+        foreach (var entry in tiles)
         {
-            { "r", redCubePrefab },
-            { "g", greenCubePrefab },
-            { "b", blueCubePrefab },
-            { "y", yellowCubePrefab },
-            { "vro", rocketVPrefab },
-            { "hro", rocketHPrefab },
-            { "bo", boxPrefab },
-            { "s", stonePrefab },
-            { "v", vasePrefab },
-        };
+            if (string.IsNullOrWhiteSpace(entry.key) || entry.prefab == null)
+            {
+                Debug.LogWarning($"[TileSpawner] Invalid entry: key='{entry.key}', prefab={(entry.prefab == null ? "null" : entry.prefab.name)}");
+                continue;
+            }
+
+            if (_prefabMap.ContainsKey(entry.key))
+            {
+                Debug.LogWarning($"[TileSpawner] Duplicate key found: '{entry.key}'");
+                continue;
+            }
+
+            _prefabMap[entry.key] = entry.prefab;
+        }
     }
 
     public async Task<GameObject> Spawn(string key, Vector2 position, Transform parent)
     {
-        if (!_prefabMap.TryGetValue(key, out GameObject prefab) || prefab == null)
+        if (!_prefabMap.TryGetValue(key, out var prefab) || prefab == null)
         {
             Debug.LogWarning($"[TileSpawner] No prefab found for key '{key}'");
             return null;

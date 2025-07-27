@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEngine;
 
 [System.Serializable]
 public class LevelData
@@ -9,4 +8,7 @@ public class LevelData
     public int grid_height;
     public int move_count;
     public List<string> grid;
+
+    [System.NonSerialized]
+    public List<LevelGoal> goals;
 }
