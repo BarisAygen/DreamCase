@@ -1,23 +1,37 @@
 using UnityEngine;
 
-public class Vase : MonoBehaviour
+public class Vase : Obstacle
 {
-    public GameObject vase2Prefab; 
+    private bool damagedThisTurn;
 
-    private int health = 2;
+    [SerializeField] private SpriteRenderer spriteRenderer;
+    [SerializeField] private Sprite intactSprite;
+    [SerializeField] private Sprite damagedSprite;
 
-    public void TakeDamage()
+    public override void Initialize(string key, int x, int y)
     {
-        health--;
+        base.Initialize(key, x, y);
+        hitPoints = 2;
+        damagedThisTurn = false;
 
-        if (health == 1)
-        {
-            GameObject vase2 = Instantiate(vase2Prefab, transform.position, Quaternion.identity, transform.parent);
-            Destroy(gameObject);
-        }
-        else if (health <= 0)
-        {
-            Destroy(gameObject);
-        }
+        // Başlangıçta sağlam sprite'ı göster
+        if (spriteRenderer != null && intactSprite != null)
+            spriteRenderer.sprite = intactSprite;
     }
+
+    public override void TakeDamage(int amount)
+    {
+        if (damagedThisTurn) return;
+        damagedThisTurn = true;
+        hitPoints--;
+
+        // 1 can kaldıysa sprite değiştir
+        if (hitPoints == 1 && damagedSprite != null && spriteRenderer != null)
+            spriteRenderer.sprite = damagedSprite;
+
+        if (hitPoints <= 0)
+            GridManager.Instance.ClearItemAt(GridX, GridY);
+    }
+
+    public void ResetTurnDamage() => damagedThisTurn = false;
 }

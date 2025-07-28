@@ -3,22 +3,28 @@ using UnityEngine;
 
 public class LevelInitializer : MonoBehaviour
 {
-    void Start()
+    private const string LastLevelKey = "LastLevel";
+
+    private void Start()
     {
         StartCoroutine(InitializeLevel());
     }
 
     private IEnumerator InitializeLevel()
     {
-        int level = PlayerPrefs.GetInt("LastLevel", 1);
+        int level = PlayerPrefs.GetInt(LastLevelKey, 1);
+
         LevelData data = LevelDataLoader.LoadLevelData(level);
         if (data == null)
         {
-            Debug.LogError($"Level {level} data not found.");
             yield break;
         }
 
         var gridTask = GameManager.Instance.GridManager.InitGrid(data);
-        while (!gridTask.IsCompleted) yield return null;
+
+        while (!gridTask.IsCompleted)
+            yield return null;
+
+        LevelUI.Instance.SetupLevel(data);
     }
 }

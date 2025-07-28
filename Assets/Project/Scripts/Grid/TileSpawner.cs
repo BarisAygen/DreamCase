@@ -5,58 +5,87 @@ using UnityEngine;
 public class TileSpawner : MonoBehaviour
 {
     [System.Serializable]
-    public class TileEntry
+    public class CubeData
     {
-        public string key;
-        public GameObject prefab;
-        public Sprite sprite;
+        public string key;                    // e.g., "r", "g", "b", "y"
+        public Sprite normalSprite;           // Default appearance
+        public Sprite hintedSprite;           // Hint appearance
     }
 
-    [SerializeField] private List<TileEntry> tiles;
-
-    private Dictionary<string, TileEntry> _tileMap;
-
-    private void Awake()
+    [System.Serializable]
+    public class KeyPrefabPair
     {
-        _tileMap = new();
+        public string key;                    // e.g., "r", "hro", "vro", etc.
+        public GameObject prefab;             // Corresponding prefab
+    }
 
-        foreach (var tile in tiles)
+    [Header("Prefab Mapping")]
+    [SerializeField] private List<KeyPrefabPair> prefabPairs;
+
+    [Header("Cube Sprites")]
+    [SerializeField] private List<CubeData> cubeSprites;
+
+    private Dictionary<string, GameObject> _prefabMap;   // key → prefab
+    private Dictionary<string, CubeData> _spriteMap;     // key → sprite data
+    
+    public void Initialize()
+    {
+        _prefabMap = new();
+        _spriteMap = new();
+
+        foreach (var pair in prefabPairs)
         {
-            if (string.IsNullOrEmpty(tile.key) || tile.prefab == null || tile.sprite == null)
+            _prefabMap[pair.key] = pair.prefab;
+
+            if (GameManager.Instance?.PoolManager == null)
             {
-                Debug.LogWarning($"Invalid tile entry for key '{tile.key}'");
                 continue;
             }
 
-            _tileMap[tile.key] = tile;
+            GameManager.Instance.PoolManager.Preload(pair.key, pair.prefab);
         }
+
+        foreach (var cube in cubeSprites)
+            _spriteMap[cube.key] = cube;
     }
 
-    public async Task<GameObject> Spawn(string key, int x, int y, Vector2 position, Transform parent)
+    // Spawns an object at given grid position using pooling
+    public async Task<Item> Spawn(string key, int x, int y, Vector2 position, Transform parent)
     {
-        if (!_tileMap.TryGetValue(key, out var entry))
+        var pool = GameManager.Instance.PoolManager;
+
+        // Safer pattern matching and fallback
+        GameObject obj = pool.Get(key);
+        if (obj is null && _prefabMap.TryGetValue(key, out var fallbackPrefab))
         {
-            Debug.LogWarning($"[TileSpawner] No prefab found for key '{key}'");
+            obj = Instantiate(fallbackPrefab);
+        }
+
+        if (obj is null)
+        {
             return null;
         }
 
-        GameObject obj = GameManager.Instance.PoolManager.Get(key, entry.prefab);
         obj.transform.SetParent(parent);
         obj.transform.position = position;
 
-        Cube cube = obj.GetComponent<Cube>();
-        cube.Initialize(key, x, y, entry.sprite);
+        // Prefer TryGetComponent over GetComponent + type check
+        if (!obj.TryGetComponent<Item>(out var item))
+        {
+            return null;
+        }
 
-        return await Task.FromResult(obj);
+        item.Initialize(key, x, y);
+
+        if (item is Cube cube && _spriteMap.TryGetValue(key, out var data))
+            cube.SetSprites(data.normalSprite, data.hintedSprite);
+
+        return await Task.FromResult(item);
     }
 
+    // Despawns (returns) object back to pool
     public void Despawn(string key, GameObject obj)
     {
         GameManager.Instance.PoolManager.Return(key, obj);
-    }
-
-    public Sprite GetSpriteForKey(string key)
-    {
-        return _tileMap.TryGetValue(key, out var entry) ? entry.sprite : null;
     }
 }

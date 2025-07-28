@@ -1,18 +1,28 @@
 using UnityEngine;
 
-public class Cube : MonoBehaviour
+public class Cube : Item
 {
     [SerializeField] private SpriteRenderer spriteRenderer;
 
-    public string Key { get; private set; }
-    public int GridX { get; private set; }
-    public int GridY { get; private set; }
+    private Sprite normalSprite;
+    private Sprite hintedSprite;
+    private bool isHinted;
 
-    public void Initialize(string key, int x, int y, Sprite sprite)
+    public void SetSprites(Sprite normal, Sprite hint)
     {
-        Key = key;
-        GridX = x;
-        GridY = y;
-        spriteRenderer.sprite = sprite;
+        normalSprite = normal;
+        hintedSprite = hint;
+        spriteRenderer.sprite = normalSprite;
+    }
+
+    public void SetHintState(bool hint)
+    {
+        isHinted = hint;
+        spriteRenderer.sprite = hint ? hintedSprite : normalSprite;
+    }
+
+    public override void OnClicked()
+    {
+        GridManager.Instance.OnCubeClicked(this);
     }
 }

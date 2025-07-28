@@ -14,12 +14,12 @@ public static class LevelDataLoader
 
         if (!File.Exists(fullPath))
         {
-            Debug.LogError($"Level file not found: {fullPath}");
             return null;
         }
 
         string json = File.ReadAllText(fullPath);
-        LevelData data = JsonUtility.FromJson<LevelData>(json);
+
+        var data = JsonUtility.FromJson<LevelData>(json);
 
         data.goals = CalculateGoalsFromGrid(data.grid);
 
@@ -29,23 +29,14 @@ public static class LevelDataLoader
     private static List<LevelGoal> CalculateGoalsFromGrid(List<string> grid)
     {
         var goalCounts = new Dictionary<string, int>();
-
         foreach (string key in grid)
         {
             if (key == "bo" || key == "s" || key == "v")
-            {
-                if (!goalCounts.ContainsKey(key))
-                    goalCounts[key] = 0;
-                goalCounts[key]++;
-            }
+                goalCounts[key] = goalCounts.TryGetValue(key, out var c) ? c + 1 : 1;
         }
-
         var goalList = new List<LevelGoal>();
         foreach (var kvp in goalCounts)
-        {
             goalList.Add(new LevelGoal(kvp.Key, kvp.Value));
-        }
-
         return goalList;
     }
 }

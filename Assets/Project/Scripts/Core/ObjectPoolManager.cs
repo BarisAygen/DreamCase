@@ -3,34 +3,39 @@ using UnityEngine;
 
 public class ObjectPoolManager : MonoBehaviour
 {
-    private Dictionary<string, Queue<GameObject>> poolMap = new();
+    private readonly Dictionary<string, Queue<GameObject>> _poolMap = new();
 
-    public GameObject Get(string key, GameObject prefab)
+    // Instantiate and store one instance of the prefab for future use
+    public void Preload(string key, GameObject prefab)
     {
-        if (!poolMap.ContainsKey(key))
-            poolMap[key] = new Queue<GameObject>();
+        if (!_poolMap.ContainsKey(key))
+            _poolMap[key] = new Queue<GameObject>();
 
-        if (poolMap[key].Count > 0)
+        var obj = Instantiate(prefab);
+        obj.SetActive(false);
+        _poolMap[key].Enqueue(obj);
+    }
+
+    // Get an object from the pool if available, otherwise return null
+    public GameObject Get(string key)
+    {
+        if (_poolMap.TryGetValue(key, out var queue) && queue.Count > 0)
         {
-            var obj = poolMap[key].Dequeue();
-            obj.SetActive(true);
+            var obj = queue.Dequeue();
+            obj.SetActive(true); // Reactivate before use
             return obj;
         }
 
-        return Instantiate(prefab);
+        return null;
     }
 
+    // Return object to the pool for reuse
     public void Return(string key, GameObject obj)
     {
         obj.SetActive(false);
-        if (!poolMap.ContainsKey(key))
-            poolMap[key] = new Queue<GameObject>();
+        if (!_poolMap.ContainsKey(key))
+            _poolMap[key] = new Queue<GameObject>();
 
-        poolMap[key].Enqueue(obj);
-    }
-
-    public void Despawn(Cube cube)
-    {
-        Return(cube.Key, cube.gameObject);
+        _poolMap[key].Enqueue(obj);
     }
 }

@@ -1,1 +1,0 @@
-public enum RocketDirection { None, Horizontal, Vertical }

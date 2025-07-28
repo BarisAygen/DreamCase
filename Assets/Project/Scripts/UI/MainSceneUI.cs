@@ -19,7 +19,6 @@ public class MainSceneUI : MonoBehaviour
         int level = PlayerPrefs.GetInt("LastLevel", 1);
         if (levelText == null || levelButton == null)
         {
-            Debug.LogError("UI references not assigned.");
             return;
         }
 

@@ -4,13 +4,13 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
-    [Header("Scene Managers")]
-    public GridManager GridManager;
-    public TileSpawner TileSpawner;
+    public GridManager    GridManager;
+    public TileSpawner    TileSpawner;
     public ObjectPoolManager PoolManager;
-    public LevelInitializer LevelInitializer;
-    public ClickHandler ClickHandler;
-    public LevelUI LevelUI;
+    public MatchService   MatchService;
+    public PhysicsService   PhysicsService;
+    public MoveManager   MoveManager;
+    public HintService   HintService;
 
     private void Awake()
     {
@@ -19,7 +19,12 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject); 
             return;
         }
-
         Instance = this;
     }
+    
+    private void Start()
+    {
+        TileSpawner.Initialize();
+    }
+    
 }
