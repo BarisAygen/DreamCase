@@ -28,4 +28,9 @@ public class ObjectPoolManager : MonoBehaviour
 
         poolMap[key].Enqueue(obj);
     }
+
+    public void Despawn(Cube cube)
+    {
+        Return(cube.Key, cube.gameObject);
+    }
 }

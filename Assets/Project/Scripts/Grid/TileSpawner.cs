@@ -7,53 +7,56 @@ public class TileSpawner : MonoBehaviour
     [System.Serializable]
     public class TileEntry
     {
-        public string key;            
-        public GameObject prefab;    
+        public string key;
+        public GameObject prefab;
+        public Sprite sprite;
     }
 
-    [Header("Tile Prefabs (key-prefab pairs)")]
     [SerializeField] private List<TileEntry> tiles;
 
-    private Dictionary<string, GameObject> _prefabMap;
+    private Dictionary<string, TileEntry> _tileMap;
 
     private void Awake()
     {
-        _prefabMap = new Dictionary<string, GameObject>();
+        _tileMap = new();
 
-        foreach (var entry in tiles)
+        foreach (var tile in tiles)
         {
-            if (string.IsNullOrWhiteSpace(entry.key) || entry.prefab == null)
+            if (string.IsNullOrEmpty(tile.key) || tile.prefab == null || tile.sprite == null)
             {
-                Debug.LogWarning($"[TileSpawner] Invalid entry: key='{entry.key}', prefab={(entry.prefab == null ? "null" : entry.prefab.name)}");
+                Debug.LogWarning($"Invalid tile entry for key '{tile.key}'");
                 continue;
             }
 
-            if (_prefabMap.ContainsKey(entry.key))
-            {
-                Debug.LogWarning($"[TileSpawner] Duplicate key found: '{entry.key}'");
-                continue;
-            }
-
-            _prefabMap[entry.key] = entry.prefab;
+            _tileMap[tile.key] = tile;
         }
     }
 
-    public async Task<GameObject> Spawn(string key, Vector2 position, Transform parent)
+    public async Task<GameObject> Spawn(string key, int x, int y, Vector2 position, Transform parent)
     {
-        if (!_prefabMap.TryGetValue(key, out var prefab) || prefab == null)
+        if (!_tileMap.TryGetValue(key, out var entry))
         {
             Debug.LogWarning($"[TileSpawner] No prefab found for key '{key}'");
             return null;
         }
 
-        GameObject obj = GameManager.Instance.PoolManager.Get(key, prefab);
+        GameObject obj = GameManager.Instance.PoolManager.Get(key, entry.prefab);
         obj.transform.SetParent(parent);
         obj.transform.position = position;
+
+        Cube cube = obj.GetComponent<Cube>();
+        cube.Initialize(key, x, y, entry.sprite);
+
         return await Task.FromResult(obj);
     }
 
     public void Despawn(string key, GameObject obj)
     {
         GameManager.Instance.PoolManager.Return(key, obj);
+    }
+
+    public Sprite GetSpriteForKey(string key)
+    {
+        return _tileMap.TryGetValue(key, out var entry) ? entry.sprite : null;
     }
 }

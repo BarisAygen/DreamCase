@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     public TileSpawner TileSpawner;
     public ObjectPoolManager PoolManager;
     public LevelInitializer LevelInitializer;
+    public ClickHandler ClickHandler;
     public LevelUI LevelUI;
 
     private void Awake()

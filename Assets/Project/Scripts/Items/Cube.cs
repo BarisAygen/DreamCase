@@ -2,20 +2,17 @@ using UnityEngine;
 
 public class Cube : MonoBehaviour
 {
-    public Sprite defaultSprite;
-    public Sprite rocketSprite;
-    private SpriteRenderer sr;
+    [SerializeField] private SpriteRenderer spriteRenderer;
 
-    private void Awake() => sr = GetComponent<SpriteRenderer>();
+    public string Key { get; private set; }
+    public int GridX { get; private set; }
+    public int GridY { get; private set; }
 
-    public void SetRocketState()
+    public void Initialize(string key, int x, int y, Sprite sprite)
     {
-
-        if (false)
-        {
-            sr.sprite = rocketSprite;
-        }
-        else
-            sr.sprite = defaultSprite;
+        Key = key;
+        GridX = x;
+        GridY = y;
+        spriteRenderer.sprite = sprite;
     }
 }
