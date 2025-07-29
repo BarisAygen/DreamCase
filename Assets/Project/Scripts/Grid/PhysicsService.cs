@@ -53,7 +53,7 @@ public class PhysicsService : MonoBehaviour
                 {
                     if (emptyY == -1) emptyY = y;
                 }
-                else if (item.CanFall && emptyY != -1)
+                else if (item.CanFall && emptyY != -1 && IsPathClear(x, y, emptyY))
                 {
                     Vector2 targetPos = WorldPosition(x, emptyY);
                     moveList.Add((item, targetPos, false));
@@ -73,7 +73,7 @@ public class PhysicsService : MonoBehaviour
                 string key = GetRandomColorKey();
                 Vector2 spawnPos = WorldPosition(x, _height + spawnHeightOffset);
                 Vector2 targetPos = WorldPosition(x, y);
-
+                if (!IsPathClear(x, _height, y)) continue;
                 var item = _spawner.Spawn(key, x, y, spawnPos, _gridParent);
                 if (item is null) continue;
 
@@ -94,6 +94,19 @@ public class PhysicsService : MonoBehaviour
             yield return c;
 
         yield return new WaitForSeconds(0.05f);
+    }
+    
+    private bool IsPathClear(int x, int fromY, int toY)
+    {
+        for (int y = fromY - 1; y >= toY; y--)
+        {
+            var belowItem = _grid[x, y];
+            if (belowItem is not null && !belowItem.CanFall)
+            {
+                return false; 
+            }
+        }
+        return true;
     }
 
     private IEnumerator FallToPositionSmooth(Item item, Vector2 targetPos, float duration, bool isNew)
