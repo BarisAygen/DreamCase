@@ -4,17 +4,39 @@ public class ClickHandler : MonoBehaviour
 {
     private Camera _cam;
 
+    [SerializeField] private LayerMask itemLayer;
+
     private void Start() => _cam = Camera.main;
 
     private void Update()
     {
-        if (!Input.GetMouseButtonDown(0)) return;
-        Vector2 world = _cam.ScreenToWorldPoint(Input.mousePosition);
-        Vector3 screen = Input.mousePosition;
-        if (Physics2D.Raycast(world, Vector2.zero).collider is Collider2D col &&
+        if (!GetTapPosition(out Vector2 screenPos)) return;
+
+        Vector2 world = _cam.ScreenToWorldPoint(screenPos);
+
+        if (Physics2D.Raycast(world, Vector2.zero, 0f, itemLayer).collider is Collider2D col &&
             col.TryGetComponent<Item>(out var item))
         {
-            item.OnClicked();
+            item.OnClicked(); 
         }
+    }
+
+    private bool GetTapPosition(out Vector2 pos)
+    {
+#if UNITY_ANDROID || UNITY_IOS
+        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
+        {
+            pos = Input.GetTouch(0).position;
+            return true;
+        }
+#else
+        if (Input.GetMouseButtonDown(0))
+        {
+            pos = Input.mousePosition;
+            return true;
+        }
+#endif
+        pos = default;
+        return false;
     }
 }

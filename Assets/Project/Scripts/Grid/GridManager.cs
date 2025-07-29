@@ -29,6 +29,18 @@ public class GridManager : MonoBehaviour
         Instance = this;
     }
 
+    private void OnEnable()
+    {
+        GameEventManager.OnItemClicked += HandleItemClicked;
+        GameEventManager.OnItemDestroyed += HandleItemDestroyed;
+    }
+
+    private void OnDisable()
+    {
+        GameEventManager.OnItemClicked -= HandleItemClicked;
+        GameEventManager.OnItemDestroyed -= HandleItemDestroyed;
+    }
+
     public async Task InitGrid(LevelData data)
     {
         _width = data.grid_width;
@@ -75,17 +87,25 @@ public class GridManager : MonoBehaviour
         _grid[x, y] = item;
     }
 
-    public void OnItemClicked(Item item)
+    private void HandleItemClicked(Item item)
     {
         if (!GameManager.Instance.MoveManager.TryConsumeMove())
             return;
+
+        GameEventManager.MoveUsed();
 
         int x = item.GridX;
         int y = item.GridY;
         Vector2 clickPos = item.transform.position;
 
-        if (item.Key == "hro") ClearRow(y);
-        else if (item.Key == "vro") ClearColumn(x);
+        if (item.Key == "hro")
+        {
+            ClearRow(y);
+        }
+        else if (item.Key == "vro")
+        {
+            ClearColumn(x);
+        }
         else if (item is Cube cube)
         {
             var group = GameManager.Instance.MatchService.FindConnectedGroup(_grid, x, y, cube.Key);
@@ -110,31 +130,41 @@ public class GridManager : MonoBehaviour
         StartCoroutine(DoPhysicsThenHints());
     }
 
+    private void HandleItemDestroyed(Item item)
+    {
+        int x = item.GridX;
+        int y = item.GridY;
+
+        if (_grid[x, y] == item)
+            _grid[x, y] = null;
+
+        GameManager.Instance.TileSpawner.Despawn(item.Key, item.gameObject);
+    }
+
     private IEnumerator DoPhysicsThenHints()
     {
         yield return StartCoroutine(GameManager.Instance.PhysicsService.ApplyGravity());
         yield return StartCoroutine(GameManager.Instance.PhysicsService.Refill());
-        GameManager.Instance.HintService.ApplyHints(_grid); // Doğrudan Item[,] gönder
+        GameManager.Instance.HintService.ApplyHints(_grid);
     }
 
     public void ClearRow(int row)
     {
         for (int x = 0; x < _width; x++)
-            ClearItemAt(x, row);
+        {
+            var item = _grid[x, row];
+            if (item != null)
+                item.DestroySelf();
+        }
     }
 
     public void ClearColumn(int col)
     {
         for (int y = 0; y < _height; y++)
-            ClearItemAt(col, y);
-    }
-
-    public void ClearItemAt(int x, int y)
-    {
-        var item = _grid[x, y];
-        if (item == null) return;
-
-        _grid[x, y] = null;
-        GameManager.Instance.TileSpawner.Despawn(item.Key, item.gameObject);
+        {
+            var item = _grid[col, y];
+            if (item != null)
+                item.DestroySelf();
+        }
     }
 }

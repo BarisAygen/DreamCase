@@ -12,14 +12,7 @@ public class Rocket : Item
     public override void Initialize(ItemAsset asset, int x, int y)
     {
         base.Initialize(asset, x, y);
-        if (spriteRenderer != null)
+        if (spriteRenderer is not null)
             spriteRenderer.sprite = asset.mainSprite;
     }
-
-    public override void OnClicked()
-    {
-        GridManager.Instance.OnItemClicked(this);
-    }
-    
-    public bool IsVertical => _asset.isVerticalRocket;
 }

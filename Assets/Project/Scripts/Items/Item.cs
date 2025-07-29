@@ -2,6 +2,9 @@ using UnityEngine;
 
 public abstract class Item : MonoBehaviour
 {
+    public static event System.Action<Item> OnAnyItemClicked;
+    public static event System.Action<Item> OnAnyItemDestroyed;
+
     public string Key => _asset.key;
     public int GridX { get; private set; }
     public int GridY { get; private set; }
@@ -14,14 +17,22 @@ public abstract class Item : MonoBehaviour
         GridX = x;
         GridY = y;
     }
-    
+
     public void SetGridPosition(int x, int y)
     {
         GridX = x;
         GridY = y;
     }
-    
-    public virtual void OnClicked() { }
 
-    public virtual bool CanFall => _asset.canFall;
+    public void OnClicked()
+    {
+        GameEventManager.ItemClicked(this);
+    }
+
+    public void DestroySelf()
+    {
+        GameEventManager.ItemDestroyed(this);
+    }
+
+    public bool CanFall => _asset.canFall;
 }

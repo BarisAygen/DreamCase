@@ -9,25 +9,20 @@ public class HintService : MonoBehaviour
 
         for (int x = 0; x < w; x++)
         for (int y = 0; y < h; y++)
-            if (grid[x,y] is Cube c) 
+            if (grid[x, y] is Cube c)
                 c.SetHintState(false);
 
         for (int x = 0; x < w; x++)
         for (int y = 0; y < h; y++)
         {
-            if (visited[x,y]) continue;
-            if (grid[x,y] is not Cube cube) continue;
+            if (visited[x, y]) continue;
+            if (grid[x, y] is not Cube cube) continue;
 
-            var group = GameManager.Instance.MatchService.FindConnectedGroup(
-                grid, x, y, cube.Key
-            );
+            var group = GridSearchUtil.FindConnectedGroup(grid, x, y, cube.Key, visited);
 
             if (group.Count >= 4)
                 foreach (var g in group)
                     g.SetHintState(true);
-
-            foreach (var g in group)
-                visited[g.GridX, g.GridY] = true;
         }
     }
 }

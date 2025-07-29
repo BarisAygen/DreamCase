@@ -27,7 +27,7 @@ public class ObjectPoolManager : MonoBehaviour
             return go;
         }
 
-        return fallbackPrefab != null ? Instantiate(fallbackPrefab) : null;
+        return fallbackPrefab is not null ? Instantiate(fallbackPrefab) : null;
     }
 
     public void Return(string key, GameObject go)

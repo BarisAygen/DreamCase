@@ -13,13 +13,14 @@ public class Obstacle : Item
     public void TakeDamage()
     {
         Health--;
+
         if (Health <= 0)
         {
-            Destroy(gameObject);
+            DestroySelf(); 
             return;
         }
 
-        if (_asset.damagedSprite != null && TryGetComponent<SpriteRenderer>(out var sr))
+        if (_asset.damagedSprite is not null && TryGetComponent<SpriteRenderer>(out var sr))
             sr.sprite = _asset.damagedSprite;
     }
 

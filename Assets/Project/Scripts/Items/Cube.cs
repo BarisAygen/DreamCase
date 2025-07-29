@@ -2,16 +2,16 @@ using UnityEngine;
 
 public class Cube : Item
 {
+    [Header("Sprite")]
     [SerializeField] private SpriteRenderer spriteRenderer;
 
-    private bool _isHinted;
     private Sprite normalSprite;
     private Sprite hintSprite;
 
     public override void Initialize(ItemAsset asset, int x, int y)
     {
         base.Initialize(asset, x, y);
-        SetSprites(asset.mainSprite, asset.hintedSprite); // ✅ Hemen burada başlat
+        SetSprites(asset.mainSprite, asset.hintedSprite); 
     }
 
     public void SetSprites(Sprite normal, Sprite hint)
@@ -23,12 +23,6 @@ public class Cube : Item
 
     public void SetHintState(bool isHint)
     {
-        _isHinted = isHint;
         spriteRenderer.sprite = isHint ? hintSprite : normalSprite;
-    }
-
-    public override void OnClicked()
-    {
-        GridManager.Instance.OnItemClicked(this);
     }
 }

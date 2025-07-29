@@ -24,12 +24,11 @@ public class TileSpawner : MonoBehaviour
     {
         if (!_assetMap.TryGetValue(key, out var asset))
         {
-            Debug.LogError($"[TileSpawner] No asset found for key: {key}");
             return null;
         }
 
         GameObject obj = GameManager.Instance.PoolManager.Get(key, asset.prefab);
-        if (obj == null) return null;
+        if (obj is null) return null;
 
         obj.transform.SetParent(parent);
         obj.transform.position = position;

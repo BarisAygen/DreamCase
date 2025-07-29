@@ -4,8 +4,9 @@ using UnityEngine.UI;
 
 public class GoalItemUI : MonoBehaviour
 {
-    [SerializeField] private Image iconImage;
-    [SerializeField] private TextMeshProUGUI countText;
+    [Header("Variables")]
+    [Tooltip("Put prefab itself")] [SerializeField] private Image iconImage;
+    [Tooltip("Put prefab's text")] [SerializeField] private TextMeshProUGUI countText;
 
     public void Setup(Sprite icon, int count)
     {
