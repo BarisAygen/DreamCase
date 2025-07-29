@@ -1,29 +1,25 @@
 using UnityEngine;
 
-public enum RocketType
-{
-    Horizontal,
-    Vertical
-}
-
 public class Rocket : Item
 {
-    [SerializeField] private SpriteRenderer sr;
-    [SerializeField] private Sprite hSprite, vSprite;
+    private SpriteRenderer spriteRenderer;
 
-    private RocketType type;
-
-    public void SetType(RocketType t)
+    private void Awake()
     {
-        type = t;
-        sr.sprite = (type == RocketType.Horizontal) ? hSprite : vSprite;
+        spriteRenderer = GetComponent<SpriteRenderer>();
+    }
+
+    public override void Initialize(ItemAsset asset, int x, int y)
+    {
+        base.Initialize(asset, x, y);
+        if (spriteRenderer != null)
+            spriteRenderer.sprite = asset.mainSprite;
     }
 
     public override void OnClicked()
     {
-        if (type == RocketType.Horizontal)
-            GridManager.Instance.ClearRow(GridY);
-        else
-            GridManager.Instance.ClearColumn(GridX);
+        GridManager.Instance.OnItemClicked(this);
     }
+    
+    public bool IsVertical => _asset.isVerticalRocket;
 }

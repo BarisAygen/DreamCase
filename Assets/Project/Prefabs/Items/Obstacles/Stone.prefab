@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1731384249835331796}
   - component: {fileID: 8806766344358202469}
-  - component: {fileID: 3878768516127306439}
+  - component: {fileID: 4362456672290291604}
   m_Layer: 0
   m_Name: Stone
   m_TagString: Untagged
@@ -88,7 +88,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &3878768516127306439
+--- !u!114 &4362456672290291604
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -97,6 +97,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 294552855599058019}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 88af44000f63a4d3692ad74b76cf20af, type: 3}
+  m_Script: {fileID: 11500000, guid: 53da596fe56a0494ab5f9a9a5b3cc2a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

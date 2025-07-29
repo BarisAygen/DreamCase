@@ -4,25 +4,31 @@ public class Cube : Item
 {
     [SerializeField] private SpriteRenderer spriteRenderer;
 
+    private bool _isHinted;
     private Sprite normalSprite;
-    private Sprite hintedSprite;
-    private bool isHinted;
+    private Sprite hintSprite;
+
+    public override void Initialize(ItemAsset asset, int x, int y)
+    {
+        base.Initialize(asset, x, y);
+        SetSprites(asset.mainSprite, asset.hintedSprite); // ✅ Hemen burada başlat
+    }
 
     public void SetSprites(Sprite normal, Sprite hint)
     {
         normalSprite = normal;
-        hintedSprite = hint;
+        hintSprite = hint;
         spriteRenderer.sprite = normalSprite;
     }
 
-    public void SetHintState(bool hint)
+    public void SetHintState(bool isHint)
     {
-        isHinted = hint;
-        spriteRenderer.sprite = hint ? hintedSprite : normalSprite;
+        _isHinted = isHint;
+        spriteRenderer.sprite = isHint ? hintSprite : normalSprite;
     }
 
     public override void OnClicked()
     {
-        GridManager.Instance.OnCubeClicked(this);
+        GridManager.Instance.OnItemClicked(this);
     }
 }

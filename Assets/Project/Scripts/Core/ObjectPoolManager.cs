@@ -3,39 +3,39 @@ using UnityEngine;
 
 public class ObjectPoolManager : MonoBehaviour
 {
-    private readonly Dictionary<string, Queue<GameObject>> _poolMap = new();
+    private readonly Dictionary<string, Queue<GameObject>> _pool = new();
 
-    // Instantiate and store one instance of the prefab for future use
-    public void Preload(string key, GameObject prefab)
+    public void WarmPool(string key, GameObject prefab, int count)
     {
-        if (!_poolMap.ContainsKey(key))
-            _poolMap[key] = new Queue<GameObject>();
+        if (!_pool.ContainsKey(key))
+            _pool[key] = new Queue<GameObject>();
 
-        var obj = Instantiate(prefab);
-        obj.SetActive(false);
-        _poolMap[key].Enqueue(obj);
+        for (int i = 0; i < count; i++)
+        {
+            GameObject go = Instantiate(prefab);
+            go.SetActive(false);
+            _pool[key].Enqueue(go);
+        }
     }
 
-    // Get an object from the pool if available, otherwise return null
-    public GameObject Get(string key)
+    public GameObject Get(string key, GameObject fallbackPrefab)
     {
-        if (_poolMap.TryGetValue(key, out var queue) && queue.Count > 0)
+        if (_pool.TryGetValue(key, out var queue) && queue.Count > 0)
         {
-            var obj = queue.Dequeue();
-            obj.SetActive(true); // Reactivate before use
-            return obj;
+            GameObject go = queue.Dequeue();
+            go.SetActive(true);
+            return go;
         }
 
-        return null;
+        return fallbackPrefab != null ? Instantiate(fallbackPrefab) : null;
     }
 
-    // Return object to the pool for reuse
-    public void Return(string key, GameObject obj)
+    public void Return(string key, GameObject go)
     {
-        obj.SetActive(false);
-        if (!_poolMap.ContainsKey(key))
-            _poolMap[key] = new Queue<GameObject>();
+        go.SetActive(false);
+        if (!_pool.ContainsKey(key))
+            _pool[key] = new Queue<GameObject>();
 
-        _poolMap[key].Enqueue(obj);
+        _pool[key].Enqueue(go);
     }
 }

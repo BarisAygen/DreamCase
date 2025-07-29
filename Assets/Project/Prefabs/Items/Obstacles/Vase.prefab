@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7983956455205701841}
   - component: {fileID: 2598639029399695517}
-  - component: {fileID: 308486146652076219}
+  - component: {fileID: 2270774823003126064}
   m_Layer: 0
   m_Name: Vase
   m_TagString: Untagged
@@ -88,7 +88,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &308486146652076219
+--- !u!114 &2270774823003126064
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -97,9 +97,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 4996726760204268489}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c1add14b4f92c477f97a9549cfeee5fa, type: 3}
+  m_Script: {fileID: 11500000, guid: 53da596fe56a0494ab5f9a9a5b3cc2a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spriteRenderer: {fileID: 2598639029399695517}
-  intactSprite: {fileID: 21300000, guid: 6f770397cf9c74e13a34fa45026da597, type: 3}
-  damagedSprite: {fileID: 21300000, guid: 0cd834e7e28e74128a2ad62d2efe550e, type: 3}

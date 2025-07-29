@@ -4,88 +4,45 @@ using UnityEngine;
 
 public class TileSpawner : MonoBehaviour
 {
-    [System.Serializable]
-    public class CubeData
+    [SerializeField] private List<ItemAsset> itemAssets;
+
+    private Dictionary<string, ItemAsset> _assetMap;
+
+    private void Start()
     {
-        public string key;                    // e.g., "r", "g", "b", "y"
-        public Sprite normalSprite;           // Default appearance
-        public Sprite hintedSprite;           // Hint appearance
-    }
-
-    [System.Serializable]
-    public class KeyPrefabPair
-    {
-        public string key;                    // e.g., "r", "hro", "vro", etc.
-        public GameObject prefab;             // Corresponding prefab
-    }
-
-    [Header("Prefab Mapping")]
-    [SerializeField] private List<KeyPrefabPair> prefabPairs;
-
-    [Header("Cube Sprites")]
-    [SerializeField] private List<CubeData> cubeSprites;
-
-    private Dictionary<string, GameObject> _prefabMap;   // key → prefab
-    private Dictionary<string, CubeData> _spriteMap;     // key → sprite data
-    
-    public void Initialize()
-    {
-        _prefabMap = new();
-        _spriteMap = new();
-
-        foreach (var pair in prefabPairs)
+        _assetMap = new();
+        foreach (var asset in itemAssets)
         {
-            _prefabMap[pair.key] = pair.prefab;
+            if (!_assetMap.ContainsKey(asset.key))
+                _assetMap[asset.key] = asset;
 
-            if (GameManager.Instance?.PoolManager == null)
-            {
-                continue;
-            }
-
-            GameManager.Instance.PoolManager.Preload(pair.key, pair.prefab);
+            GameManager.Instance.PoolManager.WarmPool(asset.key, asset.prefab, asset.PoolSize);
         }
-
-        foreach (var cube in cubeSprites)
-            _spriteMap[cube.key] = cube;
     }
 
-    // Spawns an object at given grid position using pooling
     public async Task<Item> Spawn(string key, int x, int y, Vector2 position, Transform parent)
     {
-        var pool = GameManager.Instance.PoolManager;
-
-        // Safer pattern matching and fallback
-        GameObject obj = pool.Get(key);
-        if (obj is null && _prefabMap.TryGetValue(key, out var fallbackPrefab))
+        if (!_assetMap.TryGetValue(key, out var asset))
         {
-            obj = Instantiate(fallbackPrefab);
-        }
-
-        if (obj is null)
-        {
+            Debug.LogError($"[TileSpawner] No asset found for key: {key}");
             return null;
         }
+
+        GameObject obj = GameManager.Instance.PoolManager.Get(key, asset.prefab);
+        if (obj == null) return null;
 
         obj.transform.SetParent(parent);
         obj.transform.position = position;
 
-        // Prefer TryGetComponent over GetComponent + type check
         if (!obj.TryGetComponent<Item>(out var item))
-        {
             return null;
-        }
 
-        item.Initialize(key, x, y);
-
-        if (item is Cube cube && _spriteMap.TryGetValue(key, out var data))
-            cube.SetSprites(data.normalSprite, data.hintedSprite);
-
+        item.Initialize(asset, x, y);
         return await Task.FromResult(item);
     }
 
-    // Despawns (returns) object back to pool
-    public void Despawn(string key, GameObject obj)
+    public void Despawn(string key, GameObject go)
     {
-        GameManager.Instance.PoolManager.Return(key, obj);
+        GameManager.Instance.PoolManager.Return(key, go);
     }
 }

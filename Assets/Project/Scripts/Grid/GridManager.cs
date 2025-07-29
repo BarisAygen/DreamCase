@@ -29,39 +29,36 @@ public class GridManager : MonoBehaviour
         Instance = this;
     }
 
-    // Spawns all items, then wires up physics, move counter, and hints.
     public async Task InitGrid(LevelData data)
     {
-        // store dimensions and clear old children
         _width = data.grid_width;
         _height = data.grid_height;
         _grid = new Item[_width, _height];
+
         foreach (Transform child in gridParent)
             Destroy(child.gameObject);
 
-        // resize background to fit grid
         float step = tileSize + gridPadding;
         Vector2 boardSize = new Vector2(_width, _height) * step;
         gridBackground.size = boardSize;
         gridBackground.transform.localPosition = new Vector3(0f, -2.8f, 0f);
 
-        // compute origin and spawn tasks
         Vector2 origin = (Vector2)gridBackground.transform.localPosition - boardSize * 0.5f;
         var spawnTasks = new List<Task>();
+
         for (int i = 0; i < data.grid.Count; i++)
         {
             int index = i;
             spawnTasks.Add(SpawnCell(data.grid[index], index, origin));
         }
+
         await Task.WhenAll(spawnTasks);
 
-        // initialize physics, moves, and hints
         GameManager.Instance.PhysicsService.Initialize(_grid, _width, _height, tileSize, gridPadding, gridParent);
         GameManager.Instance.MoveManager.Initialize(data.move_count);
         GameManager.Instance.HintService.ApplyHints(_grid);
     }
 
-    /// Spawns a single cell at the given grid index.
     private async Task SpawnCell(string key, int index, Vector2 origin)
     {
         if (key == "rand")
@@ -78,63 +75,46 @@ public class GridManager : MonoBehaviour
         _grid[x, y] = item;
     }
 
-    /// Called by Cube.OnClicked: processes moves, rockets, matches,
-    public void OnCubeClicked(Cube clicked)
+    public void OnItemClicked(Item item)
     {
-        // consume one move; abort if none left
         if (!GameManager.Instance.MoveManager.TryConsumeMove())
             return;
 
-        int x = clicked.GridX;
-        int y = clicked.GridY;
-        Vector2 clickPos = clicked.transform.position;
+        int x = item.GridX;
+        int y = item.GridY;
+        Vector2 clickPos = item.transform.position;
 
-        // handle rocket taps
-        if (clicked.Key == "hro" || clicked.Key == "vro")
+        if (item.Key == "hro") ClearRow(y);
+        else if (item.Key == "vro") ClearColumn(x);
+        else if (item is Cube cube)
         {
-            if (clicked.Key == "hro") ClearRow(y);
-            else ClearColumn(x);
+            var group = GameManager.Instance.MatchService.FindConnectedGroup(_grid, x, y, cube.Key);
+            if (group.Count < 2) return;
 
-            StartCoroutine(DoPhysicsThenHints());
-            return;
+            GameManager.Instance.MatchService.RemoveGroup(_grid, group);
+
+            if (group.Count >= 4)
+            {
+                string rocketKey = Random.value < 0.5f ? "hro" : "vro";
+
+                _ = GameManager.Instance.TileSpawner.Spawn(rocketKey, x, y, clickPos, gridParent)
+                    .ContinueWith(t =>
+                    {
+                        var rocket = t.Result;
+                        rocket.SetGridPosition(x, y);
+                        _grid[x, y] = rocket;
+                    });
+            }
         }
 
-        // normal cube match
-        var group = GameManager.Instance.MatchService.FindConnectedGroup(_grid, x, y, clicked.Key);
-        if (group.Count < 2)
-            return;
-
-        GameManager.Instance.MatchService.RemoveGroup(_grid, group);
-
-        // spawn rocket if group >= 4
-        if (group.Count >= 4)
-        {
-            string rocketKey = (Random.value < 0.5f) ? "hro" : "vro";
-            _ = GameManager.Instance.TileSpawner
-                .Spawn(rocketKey, x, y, clickPos, gridParent)
-                .ContinueWith(t =>
-                {
-                    var rocket = t.Result;
-                    rocket.SetGridPosition(x, y);
-                    _grid[x, y] = rocket;
-                });
-        }
-
-        // then gravity, refill, hints
         StartCoroutine(DoPhysicsThenHints());
     }
 
-    /// Runs gravity and refill coroutines in sequence, then reapplies hints.
     private IEnumerator DoPhysicsThenHints()
     {
         yield return StartCoroutine(GameManager.Instance.PhysicsService.ApplyGravity());
         yield return StartCoroutine(GameManager.Instance.PhysicsService.Refill());
-        Cube[,] cubeGrid = new Cube[_width, _height];
-        for (int x = 0; x < _width; x++)
-        for (int y = 0; y < _height; y++)
-            cubeGrid[x, y] = _grid[x, y] as Cube;
-
-        GameManager.Instance.HintService.ApplyHints(cubeGrid);
+        GameManager.Instance.HintService.ApplyHints(_grid); // Doğrudan Item[,] gönder
     }
 
     public void ClearRow(int row)
@@ -152,7 +132,8 @@ public class GridManager : MonoBehaviour
     public void ClearItemAt(int x, int y)
     {
         var item = _grid[x, y];
-        if (item is null) return;
+        if (item == null) return;
+
         _grid[x, y] = null;
         GameManager.Instance.TileSpawner.Despawn(item.Key, item.gameObject);
     }

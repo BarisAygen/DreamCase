@@ -1247,7 +1247,6 @@ MonoBehaviour:
   - 80
   - 70
   - 55
-  initialPoolSize: 8
 --- !u!1 &1424726237
 GameObject:
   m_ObjectHideFlags: 0
@@ -1337,38 +1336,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e155d4e599f14d2a9a93310b88e340e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prefabPairs:
-  - key: bo
-    prefab: {fileID: 6189682718106115605, guid: e858b8c35718649c3ab1ca0d12467465, type: 3}
-  - key: s
-    prefab: {fileID: 294552855599058019, guid: aa18c94a6bf2b469d913c6614557e9ab, type: 3}
-  - key: vro
-    prefab: {fileID: 9095915637695277150, guid: 62b241598293543b893cdbd957e58803, type: 3}
-  - key: hro
-    prefab: {fileID: 9095915637695277150, guid: 62b241598293543b893cdbd957e58803, type: 3}
-  - key: v
-    prefab: {fileID: 4996726760204268489, guid: 9ea400bfc1941413a9a352efd2b16c1f, type: 3}
-  - key: b
-    prefab: {fileID: 4250267182945713448, guid: de4982a947c734183aa55f8102b7879f, type: 3}
-  - key: g
-    prefab: {fileID: 4250267182945713448, guid: de4982a947c734183aa55f8102b7879f, type: 3}
-  - key: r
-    prefab: {fileID: 4250267182945713448, guid: de4982a947c734183aa55f8102b7879f, type: 3}
-  - key: y
-    prefab: {fileID: 4250267182945713448, guid: de4982a947c734183aa55f8102b7879f, type: 3}
-  cubeSprites:
-  - key: b
-    normalSprite: {fileID: 21300000, guid: 995e346caf5c2418bb442363903bf366, type: 3}
-    hintedSprite: {fileID: 21300000, guid: 7e7f322bc0b6442b6b9efeb3593b9195, type: 3}
-  - key: g
-    normalSprite: {fileID: 21300000, guid: 5c3d17a42f4b94065b00350835fa931e, type: 3}
-    hintedSprite: {fileID: 21300000, guid: 93c5803a99bb3439b841742578af4032, type: 3}
-  - key: r
-    normalSprite: {fileID: 21300000, guid: 3452f7f01f5d94a978651e23e9f89d6f, type: 3}
-    hintedSprite: {fileID: 21300000, guid: ffaec500208ef48bf92e811308ddd1d7, type: 3}
-  - key: y
-    normalSprite: {fileID: 21300000, guid: 8f9a23af9e2ec45e49a310e853d8a751, type: 3}
-    hintedSprite: {fileID: 21300000, guid: 6453a26af0409492ca75a81cff440d70, type: 3}
+  itemAssets:
+  - {fileID: 11400000, guid: 07cca06fcec434f63b480fb6f4570d3a, type: 2}
+  - {fileID: 11400000, guid: 0389de25d78b94177aaa211a0fe5ee8e, type: 2}
+  - {fileID: 11400000, guid: 1566844a102444064a4f5944fd7c76dc, type: 2}
+  - {fileID: 11400000, guid: 5e148d080a48f45e4a7c8066984ad93a, type: 2}
+  - {fileID: 11400000, guid: 099ef464f7eec4fd8a599361b462f2eb, type: 2}
+  - {fileID: 11400000, guid: 80c817f790ebb45478f9ad98d716cf76, type: 2}
+  - {fileID: 11400000, guid: 243500032d5a3486f8fe1b0d1806e34c, type: 2}
+  - {fileID: 11400000, guid: 8bfb23c2ca8ff4dfdbc8097aeeb4bbcb, type: 2}
+  - {fileID: 11400000, guid: 135370fa2e1c84a89bac774bd9cde345, type: 2}
 --- !u!114 &1474961666
 MonoBehaviour:
   m_ObjectHideFlags: 0
