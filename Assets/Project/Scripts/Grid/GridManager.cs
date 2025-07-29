@@ -106,7 +106,10 @@ public class GridManager : MonoBehaviour
 
         if (_grid[x, y] == item)
             _grid[x, y] = null;
-
+        if (item.Asset.type == ItemType.Obstacle) 
+        {
+            LevelUI.Instance.DecreaseGoalCountByKey(item.Key);
+        }
         GameManager.Instance.TileSpawner.Despawn(item.Key, item.gameObject);
     }
 
