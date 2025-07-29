@@ -49,7 +49,7 @@ public class PhysicsService : MonoBehaviour
             {
                 var item = _grid[x, y];
 
-                if (_grid[x, y] == null)
+                if (_grid[x, y] is null)
                 {
                     if (emptyY == -1) emptyY = y;
                 }
@@ -68,14 +68,14 @@ public class PhysicsService : MonoBehaviour
             
             for (int y = 0; y < _height; y++)
             {
-                if (_grid[x, y] != null) continue;
+                if (_grid[x, y] is not null) continue;
 
                 string key = GetRandomColorKey();
                 Vector2 spawnPos = WorldPosition(x, _height + spawnHeightOffset);
                 Vector2 targetPos = WorldPosition(x, y);
 
                 var item = _spawner.Spawn(key, x, y, spawnPos, _gridParent);
-                if (item == null) continue;
+                if (item is null) continue;
 
                 _grid[x, y] = item;
                 item.SetGridPosition(x, y);

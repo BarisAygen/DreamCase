@@ -13,10 +13,14 @@ MonoBehaviour:
   m_Name: Obstacle_Box
   m_EditorClassIdentifier: 
   key: bo
-  type: 1
+  prefab: {fileID: 6189682718106115605, guid: e858b8c35718649c3ab1ca0d12467465, type: 3}
   mainSprite: {fileID: 21300000, guid: 2c8deac4be5224ef8bb40e6ddbb494c4, type: 3}
   hintedSprite: {fileID: 0}
-  maxHealth: 0
+  type: 1
+  damagedSprite: {fileID: 0}
+  maxHealth: 1
+  takesDamageFromCube: 1
+  isDamageable: 1
   canFall: 0
   isVerticalRocket: 0
-  prefab: {fileID: 6189682718106115605, guid: e858b8c35718649c3ab1ca0d12467465, type: 3}
+  PoolSize: 10

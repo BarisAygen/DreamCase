@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -117,5 +118,42 @@ public class GridManager : MonoBehaviour
     {
         yield return StartCoroutine(GameManager.Instance.PhysicsService.RefillAndApplyGravity());
         GameManager.Instance.HintService.ApplyHints(_grid);
+    }
+    
+    public void DamageObstaclesAroundGroup(List<Cube> group)
+    {
+        HashSet<Obstacle> damaged = new();
+
+        Vector2Int[] dirs = new[]
+        {
+            Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right
+        };
+
+        foreach (var cube in group)
+        {
+            foreach (var dir in dirs)
+            {
+                int nx = cube.GridX + dir.x;
+                int ny = cube.GridY + dir.y;
+
+                if (IsInsideGrid(nx, ny))
+                {
+                    var item = _grid[nx, ny];
+                    if (item is Obstacle obs && !damaged.Contains(obs))
+                    {
+                        if (obs.Asset.takesDamageFromCube)
+                        {
+                            obs.TakeDamage();
+                            damaged.Add(obs);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private bool IsInsideGrid(int x, int y)
+    {
+        return x >= 0 && y >= 0 && x < _width && y < _height;
     }
 }

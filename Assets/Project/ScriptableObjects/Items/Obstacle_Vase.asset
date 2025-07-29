@@ -18,7 +18,9 @@ MonoBehaviour:
   hintedSprite: {fileID: 0}
   type: 1
   damagedSprite: {fileID: 21300000, guid: 0cd834e7e28e74128a2ad62d2efe550e, type: 3}
-  maxHealth: 1
+  maxHealth: 2
+  takesDamageFromCube: 1
+  isDamageable: 1
   canFall: 1
   isVerticalRocket: 0
   PoolSize: 10

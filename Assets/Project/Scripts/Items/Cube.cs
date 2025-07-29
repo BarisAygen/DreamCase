@@ -31,6 +31,8 @@ public class Cube : Item
         var group = GameManager.Instance.MatchService.FindConnectedGroup(GridManager.Instance.Grid, GridX, GridY, Key);
         if (group.Count < 2) return false;
 
+        GridManager.Instance.DamageObstaclesAroundGroup(group);
+
         GameManager.Instance.MatchService.RemoveGroup(GridManager.Instance.Grid, group);
 
         if (group.Count >= 4)

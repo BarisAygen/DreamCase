@@ -12,16 +12,17 @@ public class Obstacle : Item
 
     public void TakeDamage()
     {
-        Health--;
+        if (!_asset.isDamageable) return; 
 
+        Health--;
         if (Health <= 0)
         {
-            DestroySelf(); 
-            return;
+            DestroySelf();
         }
-
-        if (_asset.damagedSprite is not null && TryGetComponent<SpriteRenderer>(out var sr))
+        else if (_asset.damagedSprite is not null && TryGetComponent<SpriteRenderer>(out var sr))
+        {
             sr.sprite = _asset.damagedSprite;
+        }
     }
 
     public void SetHealth(int health)
