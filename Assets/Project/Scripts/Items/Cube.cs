@@ -25,4 +25,22 @@ public class Cube : Item
     {
         spriteRenderer.sprite = isHint ? hintSprite : normalSprite;
     }
+    
+    public override bool TryActivate()
+    {
+        var group = GameManager.Instance.MatchService.FindConnectedGroup(GridManager.Instance.Grid, GridX, GridY, Key);
+        if (group.Count < 2) return false;
+
+        GameManager.Instance.MatchService.RemoveGroup(GridManager.Instance.Grid, group);
+
+        if (group.Count >= 4)
+        {
+            string rocketKey = UnityEngine.Random.Range(0, 2) == 0 ? "hro" : "vro";
+            var rocket = GameManager.Instance.TileSpawner.Spawn(rocketKey, GridX, GridY, transform.position, GridManager.Instance.GridParent);
+            rocket.SetGridPosition(GridX, GridY);
+            GridManager.Instance.Grid[GridX, GridY] = rocket;
+        }
+
+        return true;
+    }
 }

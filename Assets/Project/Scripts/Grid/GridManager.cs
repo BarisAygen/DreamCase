@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -10,12 +9,17 @@ public class GridManager : MonoBehaviour
 
     [Header("References")]
     [SerializeField] private Transform gridParent;
+    public Transform GridParent => gridParent;
     [SerializeField] private SpriteRenderer gridBackground;
     [SerializeField] private float tileSize = 1.4f;
     [SerializeField] private float gridPadding = 0.04f;
 
     private int _width, _height;
+    public int Width => _width;
+    public int Height => _height;
+
     private Item[,] _grid;
+    public Item[,] Grid => _grid;
 
     public Vector2 GridOffset => gridBackground.transform.localPosition;
 
@@ -29,12 +33,14 @@ public class GridManager : MonoBehaviour
     {
         GameEventManager.OnItemClicked += HandleItemClicked;
         GameEventManager.OnItemDestroyed += HandleItemDestroyed;
+        ActionTracker.OnAllActionsComplete += OnAllActionsDone;
     }
 
     private void OnDisable()
     {
         GameEventManager.OnItemClicked -= HandleItemClicked;
         GameEventManager.OnItemDestroyed -= HandleItemDestroyed;
+        ActionTracker.OnAllActionsComplete -= OnAllActionsDone;
     }
 
     public async Task InitGrid(LevelData data)
@@ -74,33 +80,22 @@ public class GridManager : MonoBehaviour
 
     private void HandleItemClicked(Item item)
     {
-        if (!GameManager.Instance.MoveManager.TryConsumeMove())
+        if (!item.TryActivate())
             return;
 
-        GameEventManager.MoveUsed();
-
-        int x = item.GridX;
-        int y = item.GridY;
-        Vector2 clickPos = item.transform.position;
-
-        if (item.Key == "hro") ClearRow(y);
-        else if (item.Key == "vro") ClearColumn(x);
-        else if (item is Cube cube)
+        if (GameManager.Instance.MoveManager.TryConsumeMove())
         {
-            var group = GameManager.Instance.MatchService.FindConnectedGroup(_grid, x, y, cube.Key);
-            if (group.Count < 2) return;
+            GameEventManager.MoveUsed();
 
-            GameManager.Instance.MatchService.RemoveGroup(_grid, group);
-
-            if (group.Count >= 4)
+            if (!ActionTracker.Instance.HasPendingActions())
             {
-                string rocketKey = Random.value < 0.5f ? "hro" : "vro";
-                var rocket = GameManager.Instance.TileSpawner.Spawn(rocketKey, x, y, clickPos, gridParent);
-                rocket.SetGridPosition(x, y);
-                _grid[x, y] = rocket;
+                StartCoroutine(DoPhysicsThenHints());
             }
         }
+    }
 
+    private void OnAllActionsDone()
+    {
         StartCoroutine(DoPhysicsThenHints());
     }
 
@@ -117,20 +112,7 @@ public class GridManager : MonoBehaviour
 
     private IEnumerator DoPhysicsThenHints()
     {
-        yield return StartCoroutine(GameManager.Instance.PhysicsService.ApplyGravity());
-        yield return StartCoroutine(GameManager.Instance.PhysicsService.Refill());
+        yield return StartCoroutine(GameManager.Instance.PhysicsService.RefillAndApplyGravity());
         GameManager.Instance.HintService.ApplyHints(_grid);
-    }
-
-    public void ClearRow(int row)
-    {
-        for (int x = 0; x < _width; x++)
-            _grid[x, row]?.DestroySelf();
-    }
-
-    public void ClearColumn(int col)
-    {
-        for (int y = 0; y < _height; y++)
-            _grid[col, y]?.DestroySelf();
     }
 }

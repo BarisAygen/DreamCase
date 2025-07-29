@@ -10,6 +10,7 @@ public abstract class Item : MonoBehaviour
     public int GridY { get; private set; }
 
     protected ItemAsset _asset;
+    public ItemAsset Asset => _asset;
 
     public virtual void Initialize(ItemAsset asset, int x, int y)
     {
@@ -34,5 +35,10 @@ public abstract class Item : MonoBehaviour
         GameEventManager.ItemDestroyed(this);
     }
 
+    public virtual bool TryActivate()
+    {
+        return false; 
+    }
+    
     public bool CanFall => _asset.canFall;
 }
