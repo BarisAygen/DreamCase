@@ -10,15 +10,14 @@ public class PhysicsService : MonoBehaviour
     private int _width, _height;
     private Transform _gridParent;
     private Item[,] _grid;
+    private Vector2 _gridOffset;
 
     private void Awake()
     {
         _spawner = GetComponent<TileSpawner>();
     }
 
-    /// Configures the physics service with the active grid and layout parameters.
-    public void Initialize(Item[,] grid, int width, int height,
-                           float tileSize, float padding, Transform parent)
+    public void Initialize(Item[,] grid, int width, int height, float tileSize, float padding, Transform parent, Vector2 offset)
     {
         _grid = grid;
         _width = width;
@@ -26,12 +25,12 @@ public class PhysicsService : MonoBehaviour
         _tileSize = tileSize;
         _padding = padding;
         _gridParent = parent;
+        _gridOffset = offset;
     }
 
-    /// Slides all fallable items down into empty spaces one cell at a time with animation.
     public IEnumerator ApplyGravity()
     {
-        yield return new WaitForSeconds(0.1f); // Rocket oluşumu tamamlanmadan düşme başlamasın
+        yield return new WaitForSeconds(0.1f);
 
         float step = _tileSize + _padding;
         bool moved;
@@ -61,7 +60,6 @@ public class PhysicsService : MonoBehaviour
         } while (moved);
     }
 
-    /// Fills empty cells by spawning new cubes from above and makes them fall one by one.
     public IEnumerator Refill()
     {
         var colors = new[] { "r", "g", "b", "y" };
@@ -73,13 +71,12 @@ public class PhysicsService : MonoBehaviour
                 if (_grid[x, y] != null) continue;
 
                 string key = colors[Random.Range(0, colors.Length)];
-                Vector2 spawnPos = WorldPosition(x, _height); // way above the top
+                Vector2 spawnPos = WorldPosition(x, _height);
                 Vector2 targetPos = WorldPosition(x, y);
 
-                var task = _spawner.Spawn(key, x, y, spawnPos, _gridParent);
-                yield return new WaitUntil(() => task.IsCompleted);
+                var item = _spawner.Spawn(key, x, y, spawnPos, _gridParent);
+                if (item == null) continue;
 
-                var item = task.Result;
                 _grid[x, y] = item;
                 item.SetGridPosition(x, y);
 
@@ -90,28 +87,22 @@ public class PhysicsService : MonoBehaviour
         yield return new WaitForSeconds(0.05f);
     }
 
-    /// Smoothly animates item falling to a specific position.
     private IEnumerator FallToPosition(Item item, Vector2 targetPos, float speed = 15f)
     {
         while (Vector2.Distance(item.transform.position, targetPos) > 0.01f)
         {
-            item.transform.position = Vector2.MoveTowards(
-                item.transform.position,
-                targetPos,
-                speed * Time.deltaTime
-            );
+            item.transform.position = Vector2.MoveTowards(item.transform.position, targetPos, speed * Time.deltaTime);
             yield return null;
         }
 
         item.transform.position = targetPos;
     }
 
-    /// Converts grid coordinates to world position for cell centers.
     private Vector2 WorldPosition(int x, int y)
     {
         float step = _tileSize + _padding;
         Vector2 size = new Vector2(_width, _height) * step;
-        Vector2 origin = (Vector2)GameManager.Instance.GridManager.GridOffset - size * 0.5f;
+        Vector2 origin = _gridOffset - size * 0.5f;
         return origin + new Vector2(x + 0.5f, y + 0.5f) * step;
     }
 }

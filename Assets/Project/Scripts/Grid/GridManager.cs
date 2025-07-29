@@ -21,11 +21,7 @@ public class GridManager : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
+        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
     }
 
@@ -55,36 +51,25 @@ public class GridManager : MonoBehaviour
         gridBackground.size = boardSize;
         gridBackground.transform.localPosition = new Vector3(0f, -2.8f, 0f);
 
-        Vector2 origin = (Vector2)gridBackground.transform.localPosition - boardSize * 0.5f;
-        var spawnTasks = new List<Task>();
+        Vector2 origin = GridOffset - boardSize * 0.5f;
 
         for (int i = 0; i < data.grid.Count; i++)
         {
-            int index = i;
-            spawnTasks.Add(SpawnCell(data.grid[index], index, origin));
+            string key = data.grid[i] == "rand"
+                ? new[] { "r", "g", "b", "y" }[Random.Range(0, 4)]
+                : data.grid[i];
+
+            int x = i % _width;
+            int y = i / _width;
+            Vector2 pos = origin + new Vector2(x + 0.5f, y + 0.5f) * step;
+
+            var item = GameManager.Instance.TileSpawner.Spawn(key, x, y, pos, gridParent);
+            _grid[x, y] = item;
         }
 
-        await Task.WhenAll(spawnTasks);
-
-        GameManager.Instance.PhysicsService.Initialize(_grid, _width, _height, tileSize, gridPadding, gridParent);
+        GameManager.Instance.PhysicsService.Initialize(_grid, _width, _height, tileSize, gridPadding, gridParent, GridOffset);
         GameManager.Instance.MoveManager.Initialize(data.move_count);
         GameManager.Instance.HintService.ApplyHints(_grid);
-    }
-
-    private async Task SpawnCell(string key, int index, Vector2 origin)
-    {
-        if (key == "rand")
-        {
-            var colors = new[] { "r", "g", "b", "y" };
-            key = colors[Random.Range(0, colors.Length)];
-        }
-
-        int x = index % _width;
-        int y = index / _width;
-        Vector2 position = origin + new Vector2(x + 0.5f, y + 0.5f) * (tileSize + gridPadding);
-
-        Item item = await GameManager.Instance.TileSpawner.Spawn(key, x, y, position, gridParent);
-        _grid[x, y] = item;
     }
 
     private void HandleItemClicked(Item item)
@@ -98,14 +83,8 @@ public class GridManager : MonoBehaviour
         int y = item.GridY;
         Vector2 clickPos = item.transform.position;
 
-        if (item.Key == "hro")
-        {
-            ClearRow(y);
-        }
-        else if (item.Key == "vro")
-        {
-            ClearColumn(x);
-        }
+        if (item.Key == "hro") ClearRow(y);
+        else if (item.Key == "vro") ClearColumn(x);
         else if (item is Cube cube)
         {
             var group = GameManager.Instance.MatchService.FindConnectedGroup(_grid, x, y, cube.Key);
@@ -116,14 +95,9 @@ public class GridManager : MonoBehaviour
             if (group.Count >= 4)
             {
                 string rocketKey = Random.value < 0.5f ? "hro" : "vro";
-
-                _ = GameManager.Instance.TileSpawner.Spawn(rocketKey, x, y, clickPos, gridParent)
-                    .ContinueWith(t =>
-                    {
-                        var rocket = t.Result;
-                        rocket.SetGridPosition(x, y);
-                        _grid[x, y] = rocket;
-                    });
+                var rocket = GameManager.Instance.TileSpawner.Spawn(rocketKey, x, y, clickPos, gridParent);
+                rocket.SetGridPosition(x, y);
+                _grid[x, y] = rocket;
             }
         }
 
@@ -151,20 +125,12 @@ public class GridManager : MonoBehaviour
     public void ClearRow(int row)
     {
         for (int x = 0; x < _width; x++)
-        {
-            var item = _grid[x, row];
-            if (item != null)
-                item.DestroySelf();
-        }
+            _grid[x, row]?.DestroySelf();
     }
 
     public void ClearColumn(int col)
     {
         for (int y = 0; y < _height; y++)
-        {
-            var item = _grid[col, y];
-            if (item != null)
-                item.DestroySelf();
-        }
+            _grid[col, y]?.DestroySelf();
     }
 }

@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: Obstacle_Vase
   m_EditorClassIdentifier: 
   key: v
-  type: 1
+  prefab: {fileID: 4996726760204268489, guid: 9ea400bfc1941413a9a352efd2b16c1f, type: 3}
   mainSprite: {fileID: 21300000, guid: 6f770397cf9c74e13a34fa45026da597, type: 3}
   hintedSprite: {fileID: 0}
+  type: 1
   damagedSprite: {fileID: 21300000, guid: 0cd834e7e28e74128a2ad62d2efe550e, type: 3}
   maxHealth: 1
-  canFall: 0
+  canFall: 1
   isVerticalRocket: 0
-  prefab: {fileID: 4996726760204268489, guid: 9ea400bfc1941413a9a352efd2b16c1f, type: 3}
+  PoolSize: 10

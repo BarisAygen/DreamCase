@@ -21,14 +21,12 @@ public class LevelUI : MonoBehaviour
         Instance = this;
     }
 
-    /// Called by LevelInitializer once LevelData is ready.
     public void SetupLevel(LevelData data)
     {
         movesText.text = data.move_count.ToString();
         RenderGoals(data.goals);
     }
 
-    /// Updates the move counter from GridManager.
     public void UpdateMoveCount(int count)
     {
         movesText.text = count.ToString();
@@ -36,7 +34,6 @@ public class LevelUI : MonoBehaviour
 
     private void RenderGoals(List<LevelGoal> goals)
     {
-        // 🔥 Önce tüm eski hedefleri temizle
         foreach (Transform child in goalContainer)
         {
             Destroy(child.gameObject);

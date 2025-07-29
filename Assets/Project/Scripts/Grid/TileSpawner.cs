@@ -1,16 +1,15 @@
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using UnityEngine;
 
 public class TileSpawner : MonoBehaviour
 {
     [SerializeField] private List<ItemAsset> itemAssets;
-
     private Dictionary<string, ItemAsset> _assetMap;
 
     private void Start()
     {
         _assetMap = new();
+
         foreach (var asset in itemAssets)
         {
             if (!_assetMap.ContainsKey(asset.key))
@@ -20,28 +19,30 @@ public class TileSpawner : MonoBehaviour
         }
     }
 
-    public async Task<Item> Spawn(string key, int x, int y, Vector2 position, Transform parent)
+    public Item Spawn(string key, int x, int y, Vector2 position, Transform parent)
     {
-        if (!_assetMap.TryGetValue(key, out var asset))
-        {
-            return null;
-        }
+        if (!_assetMap.TryGetValue(key, out var asset)) return null;
 
         GameObject obj = GameManager.Instance.PoolManager.Get(key, asset.prefab);
-        if (obj is null) return null;
+        if (obj == null) return null;
 
         obj.transform.SetParent(parent);
         obj.transform.position = position;
 
-        if (!obj.TryGetComponent<Item>(out var item))
-            return null;
+        if (!obj.TryGetComponent<Item>(out var item)) return null;
 
         item.Initialize(asset, x, y);
-        return await Task.FromResult(item);
+        return item;
     }
 
     public void Despawn(string key, GameObject go)
     {
         GameManager.Instance.PoolManager.Return(key, go);
+    }
+    
+    public ItemAsset GetAssetByKey(string key)
+    {
+        _assetMap.TryGetValue(key, out var asset);
+        return asset;
     }
 }
