@@ -23,7 +23,8 @@ public class GridManager : MonoBehaviour
     public Item[,] Grid => _grid;
 
     public Vector2 GridOffset => gridBackground.transform.localPosition;
-
+    public bool isInputLocked = false;
+    
     private void Awake()
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
@@ -86,10 +87,9 @@ public class GridManager : MonoBehaviour
 
         if (GameManager.Instance.MoveManager.TryConsumeMove())
         {
-            GameEventManager.MoveUsed();
-
             if (!ActionTracker.Instance.HasPendingActions())
             {
+                isInputLocked = true;
                 StartCoroutine(DoPhysicsThenHints());
             }
         }

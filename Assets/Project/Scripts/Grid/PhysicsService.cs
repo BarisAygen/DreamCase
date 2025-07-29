@@ -150,6 +150,7 @@ public class PhysicsService : MonoBehaviour
         }
 
         item.transform.position = original;
+        GridManager.Instance.isInputLocked = false;
     }
 
     private string GetRandomColorKey()

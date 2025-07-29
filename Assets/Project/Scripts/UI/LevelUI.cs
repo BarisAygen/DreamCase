@@ -96,4 +96,17 @@ public class LevelUI : MonoBehaviour
             goalUI.DecreaseCount();
         }
     }
+    
+    public bool AreAllGoalsCompleted()
+    {
+        foreach (var goal in goalUIMap.Values)
+        {
+            if (!goal.IsDone)
+                return false;
+                
+            goal.doneCheck.gameObject.SetActive(true);
+            goal.countText.gameObject.SetActive(false);
+        }
+        return true;
+    }
 }

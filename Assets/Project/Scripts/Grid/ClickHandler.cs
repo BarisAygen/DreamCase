@@ -10,7 +10,8 @@ public class ClickHandler : MonoBehaviour
 
     private void Update()
     {
-        if (!GetTapPosition(out Vector2 screenPos)) return;
+
+        if (!GetTapPosition(out Vector2 screenPos) || GameManager.Instance.GridManager.isInputLocked) return;
 
         Vector2 world = _cam.ScreenToWorldPoint(screenPos);
 
