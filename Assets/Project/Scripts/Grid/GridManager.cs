@@ -35,14 +35,14 @@ public class GridManager : MonoBehaviour
     {
         GameEventManager.OnItemClicked += HandleItemClicked;
         GameEventManager.OnItemDestroyed += HandleItemDestroyed;
-        ActionTracker.OnAllActionsComplete += OnAllActionsDone;
+        GameEventManager.OnAllActionsComplete += OnAllActionsDone;
     }
 
     private void OnDisable()
     {
         GameEventManager.OnItemClicked -= HandleItemClicked;
         GameEventManager.OnItemDestroyed -= HandleItemDestroyed;
-        ActionTracker.OnAllActionsComplete -= OnAllActionsDone;
+        GameEventManager.OnAllActionsComplete -= OnAllActionsDone;
     }
 
     public async Task InitGrid(LevelData data)

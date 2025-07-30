@@ -7,7 +7,7 @@ public class ChainReactionManager : MonoBehaviour
     public static ChainReactionManager Instance { get; private set; }
 
     private Queue<IChainReactionItem> queue = new();
-    private bool isRunning = false;
+    private bool isRunning;
 
     private void Awake()
     {

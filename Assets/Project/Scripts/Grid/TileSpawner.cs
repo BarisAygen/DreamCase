@@ -15,7 +15,7 @@ public class TileSpawner : MonoBehaviour
             if (!_assetMap.ContainsKey(asset.key))
                 _assetMap[asset.key] = asset;
 
-            GameManager.Instance.PoolManager.WarmPool(asset.key, asset.prefab, asset.PoolSize);
+            ObjectPoolManager.Instance.WarmPool(asset.key, asset.prefab, asset.PoolSize);
         }
     }
 
@@ -23,7 +23,7 @@ public class TileSpawner : MonoBehaviour
     {
         if (!_assetMap.TryGetValue(key, out var asset)) return null;
 
-        GameObject obj = GameManager.Instance.PoolManager.Get(key, asset.prefab);
+        GameObject obj = ObjectPoolManager.Instance.Get(key, asset.prefab);
         if (obj is null) return null;
 
         obj.transform.SetParent(parent);
@@ -37,7 +37,7 @@ public class TileSpawner : MonoBehaviour
 
     public void Despawn(string key, GameObject go)
     {
-        GameManager.Instance.PoolManager.Return(key, go);
+        ObjectPoolManager.Instance.Return(key, go);
     }
     
     public ItemAsset GetAssetByKey(string key)

@@ -20,7 +20,7 @@ public class LevelInitializer : MonoBehaviour
             yield break;
         }
 
-        var gridTask = GameManager.Instance.GridManager.InitGrid(data);
+        var gridTask = GridManager.Instance.InitGrid(data);
 
         while (!gridTask.IsCompleted)
             yield return null;

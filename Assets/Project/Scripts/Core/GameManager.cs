@@ -4,9 +4,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
-    public GridManager    GridManager;
     public TileSpawner    TileSpawner;
-    public ObjectPoolManager PoolManager;
     public MatchService   MatchService;
     public PhysicsService   PhysicsService;
     public MoveManager   MoveManager;

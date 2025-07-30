@@ -4,10 +4,8 @@ using System;
 public class ActionTracker : MonoBehaviour
 {
     public static ActionTracker Instance { get; private set; }
-
-    public static event Action OnAllActionsComplete;
-
-    private int pendingActions = 0;
+    
+    private int pendingActions;
 
     private void Awake()
     {
@@ -29,7 +27,7 @@ public class ActionTracker : MonoBehaviour
     {
         pendingActions = Mathf.Max(0, pendingActions - 1);
         if (pendingActions == 0)
-            OnAllActionsComplete?.Invoke();
+            GameEventManager.AllActionsComplete();
     }
 
     public bool HasPendingActions() => pendingActions > 0;

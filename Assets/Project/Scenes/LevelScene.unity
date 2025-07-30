@@ -1461,7 +1461,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fallDuration: 0.3
   spawnHeightOffset: 2
-  bounceHeight: 0.3
+  bounceHeight: 0.25
   bounceDuration: 0.25
 --- !u!1 &1485739526
 GameObject:
@@ -1518,7 +1518,7 @@ GameObject:
   - component: {fileID: 1896678002}
   - component: {fileID: 1896678003}
   m_Layer: 0
-  m_Name: ChainManager
+  m_Name: ChainReactionManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1595,9 +1595,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b90702a7a0b74571b444c32eb3dd779, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GridManager: {fileID: 756076290}
   TileSpawner: {fileID: 1474961665}
-  PoolManager: {fileID: 1424726239}
   MatchService: {fileID: 884115431}
   PhysicsService: {fileID: 1474961666}
   MoveManager: {fileID: 1485739528}
