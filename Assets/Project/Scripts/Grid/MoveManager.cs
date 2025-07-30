@@ -18,7 +18,7 @@ public class MoveManager : MonoBehaviour
         MoveCount--;
         LevelUI.Instance.UpdateMoveCount(MoveCount);
 
-        if (LevelUI.Instance.AreAllGoalsCompleted())
+        if (GoalManager.Instance.AreAllGoalsCompleted())
         {
             GameEventManager.GameOver(true);
         }

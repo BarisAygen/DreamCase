@@ -5,7 +5,15 @@ public class ObjectPoolManager : MonoBehaviour
 {
     public static ObjectPoolManager Instance { get; private set; }
 
-    private readonly Dictionary<string, Queue<GameObject>> _pool = new();
+    private class PoolData
+    {
+        public GameObject prefab;
+        public Queue<GameObject> objects = new();
+        public int maxSize;
+        public Transform holder;
+    }
+
+    private readonly Dictionary<string, PoolData> _pools = new();
 
     private void Awake()
     {
@@ -17,52 +25,77 @@ public class ObjectPoolManager : MonoBehaviour
 
         Instance = this;
     }
-    
-    public void WarmPool(string key, GameObject prefab, int count)
-    {
-        if (!_pool.ContainsKey(key))
-            _pool[key] = new Queue<GameObject>();
 
-        for (int i = 0; i < count; i++)
+    public void WarmPool(string key, GameObject prefab, int initialCount, int maxSize = int.MaxValue)
+    {
+        if (!_pools.ContainsKey(key))
         {
-            GameObject go = Instantiate(prefab);
+            
+            GameObject holderObj = new GameObject($"Pool_{key}_Holder");
+            holderObj.transform.SetParent(this.transform); // 
+
+            _pools[key] = new PoolData
+            {
+                prefab = prefab,
+                maxSize = maxSize,
+                holder = holderObj.transform
+            };
+        }
+
+        var pool = _pools[key];
+
+        for (int i = 0; i < initialCount; i++)
+        {
+            GameObject go = Instantiate(pool.prefab, pool.holder);
             go.SetActive(false);
-            _pool[key].Enqueue(go);
+            pool.objects.Enqueue(go);
         }
     }
-    
-    public GameObject Get(string key, GameObject fallbackPrefab)
+
+    public GameObject Get(string key)
     {
-        GameObject go = null;
-
-        if (_pool.TryGetValue(key, out var queue) && queue.Count > 0)
+        if (!_pools.TryGetValue(key, out var pool))
         {
-            go = queue.Dequeue();
-        }
-        else if (fallbackPrefab != null)
-        {
-            go = Instantiate(fallbackPrefab);
+            Debug.LogWarning($"Pool key '{key}' not found.");
+            return null;
         }
 
-        if (go != null)
+        GameObject go;
+
+        if (pool.objects.Count > 0)
         {
-            go.SetActive(true);
+            go = pool.objects.Dequeue();
+        }
+        else
+        {
+            go = Instantiate(pool.prefab, pool.holder);
         }
 
+        go.SetActive(true);
         return go;
     }
     
     public void Return(string key, GameObject go)
     {
-        if (go is null) return;
+        if (go == null) return;
 
         go.SetActive(false);
 
-        if (!_pool.ContainsKey(key))
+        if (!_pools.TryGetValue(key, out var pool))
         {
-            _pool[key] = new Queue<GameObject>();
+            Destroy(go);
+            return;
         }
 
-        _pool[key].Enqueue(go);
+        go.transform.SetParent(pool.holder); 
+
+        if (pool.objects.Count >= pool.maxSize)
+        {
+            Destroy(go); 
+        }
+        else
+        {
+            pool.objects.Enqueue(go);
+        }
     }
 }

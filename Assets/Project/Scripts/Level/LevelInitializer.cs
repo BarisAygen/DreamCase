@@ -25,6 +25,7 @@ public class LevelInitializer : MonoBehaviour
         while (!gridTask.IsCompleted)
             yield return null;
 
-        LevelUI.Instance.SetupLevel(data);
+        GoalManager.Instance.Initialize(data.goals);
+        MoveManager.Instance.Initialize(data.move_count);
     }
 }

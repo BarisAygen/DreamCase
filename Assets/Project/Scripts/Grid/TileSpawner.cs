@@ -23,7 +23,7 @@ public class TileSpawner : MonoBehaviour
     {
         if (!_assetMap.TryGetValue(key, out var asset)) return null;
 
-        GameObject obj = ObjectPoolManager.Instance.Get(key, asset.prefab);
+        GameObject obj = ObjectPoolManager.Instance.Get(key);
         if (obj is null) return null;
 
         obj.transform.SetParent(parent);
@@ -39,7 +39,7 @@ public class TileSpawner : MonoBehaviour
     {
         ObjectPoolManager.Instance.Return(key, go);
     }
-    
+
     public ItemAsset GetAssetByKey(string key)
     {
         _assetMap.TryGetValue(key, out var asset);

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8f16aa0acb7a45daa70a631ef927741, type: 3}
   m_Name: Obstacle_Box
   m_EditorClassIdentifier: 
+  size: {x: 1, y: 1}
   key: bo
   prefab: {fileID: 6189682718106115605, guid: e858b8c35718649c3ab1ca0d12467465, type: 3}
   mainSprite: {fileID: 21300000, guid: 2c8deac4be5224ef8bb40e6ddbb494c4, type: 3}
@@ -23,4 +24,4 @@ MonoBehaviour:
   isDamageable: 1
   canFall: 0
   isVerticalRocket: 0
-  PoolSize: 10
+  PoolSize: 30

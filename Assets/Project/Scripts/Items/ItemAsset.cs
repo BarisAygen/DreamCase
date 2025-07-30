@@ -22,5 +22,5 @@ public class ItemAsset : ScriptableObject
     public bool isDamageable; 
     public bool canFall;               
     public bool isVerticalRocket;      
-    [Min(5)] public int PoolSize = 10;
+    [Min(10)] public int PoolSize;
 }

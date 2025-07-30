@@ -13,15 +13,15 @@ public class SetLevelToolWindow : EditorWindow
 
     private void OnGUI()
     {
-        GUILayout.Label("Set Last Level", EditorStyles.boldLabel);
+        GUILayout.Label("Set Level", EditorStyles.boldLabel);
 
         levelToSet = EditorGUILayout.IntField("Level", levelToSet);
 
-        if (GUILayout.Button("Set Last Level"))
+        if (GUILayout.Button("Set Level"))
         {
             PlayerPrefs.SetInt("LastLevel", levelToSet);
             PlayerPrefs.Save();
-            Debug.Log($"[SetLevelTool] LastLevel set to {levelToSet}");
+            Debug.Log($"[SetLevelTool] Level set to {levelToSet}");
         }
     }
 }

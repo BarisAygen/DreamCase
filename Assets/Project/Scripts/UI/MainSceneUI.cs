@@ -17,7 +17,10 @@ public class MainSceneUI : MonoBehaviour
         int level = PlayerPrefs.GetInt("LastLevel", 1);
         int maxLevel = LevelDataLoader.GetMaxLevel();
 
-        levelText.text = level > maxLevel ? "Finished" : $"Level {level}"; 
+        bool isFinished = level > maxLevel;
+        levelText.text = isFinished ? "Finished" : $"Level {level}";
+
+        levelButton.interactable = !isFinished; 
     }
     
     public void OnLevelButtonClicked() 

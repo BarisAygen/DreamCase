@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8f16aa0acb7a45daa70a631ef927741, type: 3}
   m_Name: Obstacle_Vase
   m_EditorClassIdentifier: 
+  size: {x: 1, y: 1}
   key: v
   prefab: {fileID: 4996726760204268489, guid: 9ea400bfc1941413a9a352efd2b16c1f, type: 3}
   mainSprite: {fileID: 21300000, guid: 6f770397cf9c74e13a34fa45026da597, type: 3}
@@ -23,4 +24,4 @@ MonoBehaviour:
   isDamageable: 1
   canFall: 1
   isVerticalRocket: 0
-  PoolSize: 10
+  PoolSize: 30

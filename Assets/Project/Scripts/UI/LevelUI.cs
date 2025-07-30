@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class LevelUI : MonoBehaviour
 {
@@ -18,28 +19,17 @@ public class LevelUI : MonoBehaviour
 
     private Dictionary<string, GoalItemUI> goalUIMap = new();
 
-    private void Awake()
-    {
-        Instance = this;
-    }
-
-    public void SetupLevel(LevelData data)
-    {
-        movesText.text = data.move_count.ToString();
-        RenderGoals(data.goals);
-    }
+    private void Awake() => Instance = this;
 
     public void UpdateMoveCount(int count)
     {
         movesText.text = count.ToString();
     }
 
-    private void RenderGoals(List<LevelGoal> goals)
+    public void RenderGoals(List<LevelGoal> goals)
     {
         foreach (Transform child in goalContainer)
-        {
             Destroy(child.gameObject);
-        }
 
         goalUIMap.Clear();
 
@@ -50,18 +40,24 @@ public class LevelUI : MonoBehaviour
         {
             var goal = goals[i];
             var item = Instantiate(goalItemPrefab, goalContainer);
-            item.gameObject.SetActive(true);
-
-            var icon = iconLibrary.GetIcon(goal.key);
-            item.Setup(goal.key, icon, goal.count);
-
-            goalUIMap[goal.key] = item;
+            item.Setup(goal.key, iconLibrary.GetIcon(goal.key), goal.count);
 
             var rt = item.GetComponent<RectTransform>();
             rt.sizeDelta = new Vector2(110f, 110f);
             rt.localScale = Vector3.one * (size / 110f);
             rt.anchoredPosition = GetGoalPosition(i, count);
+
+            goalUIMap[goal.key] = item;
         }
+    }
+
+    public void UpdateGoalUI(string key, int newCount)
+    {
+        if (!goalUIMap.TryGetValue(key, out var ui)) return;
+
+        ui.countText.text = $"{newCount}";
+        ui.doneCheck.gameObject.SetActive(newCount <= 0);
+        ui.countText.gameObject.SetActive(newCount > 0);
     }
 
     private Vector2 GetGoalPosition(int index, int count)
@@ -87,26 +83,5 @@ public class LevelUI : MonoBehaviour
                 float y = -((row - (cols - 1) / 2f) * spacing);
                 return new Vector2(x, y);
         }
-    }
-
-    public void DecreaseGoalCountByKey(string key)
-    {
-        if (goalUIMap.TryGetValue(key, out var goalUI))
-        {
-            goalUI.DecreaseCount();
-        }
-    }
-    
-    public bool AreAllGoalsCompleted()
-    {
-        foreach (var goal in goalUIMap.Values)
-        {
-            if (!goal.IsDone)
-                return false;
-                
-            goal.doneCheck.gameObject.SetActive(true);
-            goal.countText.gameObject.SetActive(false);
-        }
-        return true;
     }
 }
