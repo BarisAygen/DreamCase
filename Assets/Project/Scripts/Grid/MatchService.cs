@@ -13,7 +13,7 @@ public class MatchService : MonoBehaviour
         foreach (var c in group)
         {
             grid[c.GridX, c.GridY] = null;
-            GameManager.Instance.TileSpawner.Despawn(c.Key, c.gameObject);
+            c.DestroySelf();
         }
     }
 }

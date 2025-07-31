@@ -56,7 +56,6 @@ public class ObjectPoolManager : MonoBehaviour
     {
         if (!_pools.TryGetValue(key, out var pool))
         {
-            Debug.LogWarning($"Pool key '{key}' not found.");
             return null;
         }
 

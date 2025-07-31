@@ -38,7 +38,7 @@ public class GameOverUI : MonoBehaviour
         retryButton.gameObject.SetActive(!win);
     }
 
-    public void OnGameOverClicked()
+    public void OnGameOverButtonClicked()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }

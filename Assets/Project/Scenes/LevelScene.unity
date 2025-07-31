@@ -998,7 +998,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1414540332}
         m_TargetAssemblyTypeName: GameOverUI, Assembly-CSharp
-        m_MethodName: OnGameOverClicked
+        m_MethodName: OnGameOverButtonClicked
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2050,7 +2050,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1414540332}
         m_TargetAssemblyTypeName: GameOverUI, Assembly-CSharp
-        m_MethodName: OnGameOverClicked
+        m_MethodName: OnGameOverButtonClicked
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

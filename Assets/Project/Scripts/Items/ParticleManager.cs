@@ -16,7 +16,7 @@ public class ParticleManager : MonoBehaviour
     private void Start()
     {
         Instance = this;
-        ObjectPoolManager.Instance.WarmPool("particle", particlePrefab, 10);
+        ObjectPoolManager.Instance.WarmPool("particle", particlePrefab, 20);
     }
 
     private void OnEnable()
@@ -32,8 +32,6 @@ public class ParticleManager : MonoBehaviour
     private void OnItemDestroyed(Item item)
     {
         Material mat = GetMaterialByKey(item.Key);
-        Debug.Log($"[ParticleManager] Key: {item.Key} | Mat: {(mat == null ? "NULL" : mat.name)}");
-
         if (mat == null) return;
 
         StartCoroutine(SpawnParticle(item.transform.position, mat));

@@ -89,7 +89,7 @@ public class GridManager : MonoBehaviour
             if (!ActionTracker.Instance.HasPendingActions())
             {
                 isInputLocked = true;
-                StartCoroutine(DoPhysicsThenHints());
+                OnAllActionsDone();
             }
         }
     }
@@ -110,7 +110,7 @@ public class GridManager : MonoBehaviour
         {
             GoalManager.Instance.DecreaseGoal(item.Key);
         }
-        item.DestroySelf();
+        GameManager.Instance.TileSpawner.Despawn(item.Key, item.gameObject);
     }
 
     private IEnumerator DoPhysicsThenHints()

@@ -13,7 +13,7 @@ public class Rocket : Item, IChainReactionItem
     public override void Initialize(ItemAsset asset, int x, int y)
     {
         base.Initialize(asset, x, y);
-        if (spriteRenderer is not null)
+        if (spriteRenderer != null)
             spriteRenderer.sprite = asset.mainSprite;
     }
 
@@ -26,15 +26,7 @@ public class Rocket : Item, IChainReactionItem
     public IEnumerator ExecuteEffectSequence()
     {
         bool triggeredCombo = false;
-
-        Vector2Int[] dirs = new[]
-        {
-            Vector2Int.up,
-            Vector2Int.down,
-            Vector2Int.left,
-            Vector2Int.right
-        };
-
+        Vector2Int[] dirs = new[] { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
         foreach (var dir in dirs)
         {
             int nx = GridX + dir.x;
@@ -52,28 +44,40 @@ public class Rocket : Item, IChainReactionItem
 
         if (triggeredCombo)
         {
-            for (int dx = -1; dx <= 1; dx++)
+            int halfSize = 1;
+            int maxOffsetX = Mathf.Max(GridX, GridManager.Instance.Width - GridX - 1);
+            int maxOffsetY = Mathf.Max(GridY, GridManager.Instance.Height - GridY - 1);
+            int maxOffset = Mathf.Max(maxOffsetX, maxOffsetY);
+
+            for (int offset = 1; offset <= maxOffset; offset++)
             {
-                int colX = GridX + dx;
-                if (!GridManager.Instance.IsInsideGrid(colX, GridY)) continue;
-
-                for (int y = 0; y < GridManager.Instance.Height; y++)
+                if (offset <= maxOffsetX)
                 {
-                    if (y == GridY && dx == 0) continue; 
-                    yield return TryDestroy(colX, y);
+                    int xPos = GridX + offset;
+                    int xNeg = GridX - offset;
+                    for (int dy = -halfSize; dy <= halfSize; dy++)
+                    {
+                        int y = GridY + dy;
+                        if (GridManager.Instance.IsInsideGrid(xPos, y))
+                            StartCoroutine(TryDestroy(xPos, y));
+                        if (GridManager.Instance.IsInsideGrid(xNeg, y))
+                            StartCoroutine(TryDestroy(xNeg, y));
+                    }
                 }
-            }
-
-            for (int dy = -1; dy <= 1; dy++)
-            {
-                int rowY = GridY + dy;
-                if (!GridManager.Instance.IsInsideGrid(GridX, rowY)) continue;
-
-                for (int x = 0; x < GridManager.Instance.Width; x++)
+                if (offset <= maxOffsetY)
                 {
-                    if (x >= GridX - 1 && x <= GridX + 1 && rowY == GridY) continue; 
-                    yield return TryDestroy(x, rowY);
+                    int yPos = GridY + offset;
+                    int yNeg = GridY - offset;
+                    for (int dx = -halfSize; dx <= halfSize; dx++)
+                    {
+                        int x = GridX + dx;
+                        if (GridManager.Instance.IsInsideGrid(x, yPos))
+                            StartCoroutine(TryDestroy(x, yPos));
+                        if (GridManager.Instance.IsInsideGrid(x, yNeg))
+                            StartCoroutine(TryDestroy(x, yNeg));
+                    }
                 }
+                yield return new WaitForSeconds(0.05f);
             }
         }
         else
@@ -84,15 +88,11 @@ public class Rocket : Item, IChainReactionItem
                 {
                     int upY = GridY + offset;
                     int downY = GridY - offset;
-
                     if (GridManager.Instance.IsInsideGrid(GridX, upY))
                         yield return TryDestroy(GridX, upY);
-
                     if (GridManager.Instance.IsInsideGrid(GridX, downY))
                         yield return TryDestroy(GridX, downY);
-
-                    if (!GridManager.Instance.IsInsideGrid(GridX, upY) &&
-                        !GridManager.Instance.IsInsideGrid(GridX, downY))
+                    if (!GridManager.Instance.IsInsideGrid(GridX, upY) && !GridManager.Instance.IsInsideGrid(GridX, downY))
                         break;
                 }
             }
@@ -102,15 +102,11 @@ public class Rocket : Item, IChainReactionItem
                 {
                     int rightX = GridX + offset;
                     int leftX = GridX - offset;
-
                     if (GridManager.Instance.IsInsideGrid(rightX, GridY))
                         yield return TryDestroy(rightX, GridY);
-
                     if (GridManager.Instance.IsInsideGrid(leftX, GridY))
                         yield return TryDestroy(leftX, GridY);
-
-                    if (!GridManager.Instance.IsInsideGrid(rightX, GridY) &&
-                        !GridManager.Instance.IsInsideGrid(leftX, GridY))
+                    if (!GridManager.Instance.IsInsideGrid(rightX, GridY) && !GridManager.Instance.IsInsideGrid(leftX, GridY))
                         break;
                 }
             }
@@ -123,10 +119,9 @@ public class Rocket : Item, IChainReactionItem
     private IEnumerator TryDestroy(int x, int y)
     {
         var item = GridManager.Instance.Grid[x, y];
-        if (item is null || item == this) yield break;
-
+        if (item == null || item == this)
+            yield break;
         yield return new WaitForSeconds(0.015f);
-
         if (item is IChainReactionItem special)
             ChainReactionManager.Instance.Enqueue(special);
         else
