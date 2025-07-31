@@ -9,9 +9,8 @@ public class GameManager : MonoBehaviour
     public PhysicsService   PhysicsService;
     public MoveManager   MoveManager;
     public HintService   HintService;
+    public ClickHandler ClickHandler;
     
-    public bool IsGameOver { get; private set; } = false;
-
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -24,7 +23,7 @@ public class GameManager : MonoBehaviour
     
     private void Start()
     {
-        IsGameOver = false;
+        ClickHandler.enabled = true;
     }
     
     private void OnEnable()
@@ -39,7 +38,7 @@ public class GameManager : MonoBehaviour
 
     private void HandleGameOver(bool won)
     {
-        IsGameOver = true;
+        ClickHandler.enabled = false;
 
         if (won)
         {

@@ -38,14 +38,9 @@ public class GameOverUI : MonoBehaviour
         retryButton.gameObject.SetActive(!win);
     }
 
-    public void OnNextLevelClicked()
+    public void OnGameOverClicked()
     {
-        SceneManager.LoadScene("LevelScene");
-    }
-
-    public void OnRetryClicked()
-    {
-        SceneManager.LoadScene("LevelScene");
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     public void OnMainMenuClicked()

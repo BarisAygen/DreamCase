@@ -12,11 +12,6 @@ public class GridManager : MonoBehaviour
     [SerializeField] private Transform gridParent;
     public Transform GridParent => gridParent;
     [SerializeField] private SpriteRenderer gridBackground; 
-    public SpriteRenderer GridBackground
-    {
-        get => gridBackground;
-        set => gridBackground = value;
-    }
     [SerializeField] private float tileSize = 1.4f;
     [SerializeField] private float gridPadding = 0.04f;
 
@@ -40,7 +35,6 @@ public class GridManager : MonoBehaviour
         GameEventManager.OnItemClicked += HandleItemClicked;
         GameEventManager.OnItemDestroyed += HandleItemDestroyed;
         GameEventManager.OnAllActionsComplete += OnAllActionsDone;
-        GameEventManager.OnGameOver += HandleGameOver;
     }
 
     private void OnDisable()
@@ -48,13 +42,10 @@ public class GridManager : MonoBehaviour
         GameEventManager.OnItemClicked -= HandleItemClicked;
         GameEventManager.OnItemDestroyed -= HandleItemDestroyed;
         GameEventManager.OnAllActionsComplete -= OnAllActionsDone;
-        GameEventManager.OnGameOver -= HandleGameOver;
     }
 
     public async Task InitGrid(LevelData data)
     {
-        gridBackground.gameObject.SetActive(true);
-        GridParent.gameObject.SetActive(true);
         _width = data.grid_width;
         _height = data.grid_height;
         _grid = new Item[_width, _height];
@@ -160,15 +151,8 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    private bool IsInsideGrid(int x, int y)
+    public bool IsInsideGrid(int x, int y)
     {
         return x >= 0 && y >= 0 && x < _width && y < _height;
-    }
-    
-    private void HandleGameOver(bool won)
-    {
-        isInputLocked = true;
-        GridBackground.gameObject.SetActive(false);
-        GridParent.gameObject.SetActive(false);
     }
 }
