@@ -11,7 +11,6 @@ public enum ItemType
 public class ItemAsset : ScriptableObject
 {
     public Vector2Int size = Vector2Int.one; 
-    public GameObject destroyParticlePrefab;
     public string key;                  
     public GameObject prefab;
     public Sprite mainSprite;

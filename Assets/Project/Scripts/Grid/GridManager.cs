@@ -110,7 +110,7 @@ public class GridManager : MonoBehaviour
         {
             GoalManager.Instance.DecreaseGoal(item.Key);
         }
-        GameManager.Instance.TileSpawner.Despawn(item.Key, item.gameObject);
+        item.DestroySelf();
     }
 
     private IEnumerator DoPhysicsThenHints()

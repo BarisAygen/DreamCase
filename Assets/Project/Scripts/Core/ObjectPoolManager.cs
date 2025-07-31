@@ -32,7 +32,7 @@ public class ObjectPoolManager : MonoBehaviour
         {
             
             GameObject holderObj = new GameObject($"Pool_{key}_Holder");
-            holderObj.transform.SetParent(this.transform); // 
+            holderObj.transform.SetParent(this.transform); 
 
             _pools[key] = new PoolData
             {
