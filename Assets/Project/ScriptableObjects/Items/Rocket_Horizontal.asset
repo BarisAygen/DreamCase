@@ -12,12 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8f16aa0acb7a45daa70a631ef927741, type: 3}
   m_Name: Rocket_Horizontal
   m_EditorClassIdentifier: 
+  size: {x: 1, y: 1}
   key: hro
-  type: 2
+  prefab: {fileID: 9095915637695277150, guid: 62b241598293543b893cdbd957e58803, type: 3}
   mainSprite: {fileID: 21300000, guid: 486ad2352860b4890a55f7bffb9b1043, type: 3}
   hintedSprite: {fileID: 0}
+  type: 2
   damagedSprite: {fileID: 0}
   maxHealth: 0
+  takesDamageFromCube: 0
+  isDamageable: 0
   canFall: 1
   isVerticalRocket: 0
-  prefab: {fileID: 9095915637695277150, guid: 62b241598293543b893cdbd957e58803, type: 3}
+  PoolSize: 10

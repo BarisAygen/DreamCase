@@ -84,11 +84,12 @@ public class GridManager : MonoBehaviour
         if (!item.TryActivate())
             return;
 
+        isInputLocked = true;
+        
         if (GameManager.Instance.MoveManager.TryConsumeMove())
         {
             if (!ActionTracker.Instance.HasPendingActions())
             {
-                isInputLocked = true;
                 OnAllActionsDone();
             }
         }
@@ -117,6 +118,7 @@ public class GridManager : MonoBehaviour
     {
         yield return StartCoroutine(GameManager.Instance.PhysicsService.RefillAndApplyGravity());
         GameManager.Instance.HintService.ApplyHints(_grid);
+        isInputLocked = false;
     }
     
     public void DamageObstaclesAroundGroup(List<Cube> group)

@@ -55,9 +55,7 @@ public class ObjectPoolManager : MonoBehaviour
     public GameObject Get(string key)
     {
         if (!_pools.TryGetValue(key, out var pool))
-        {
             return null;
-        }
 
         GameObject go;
 
@@ -73,7 +71,7 @@ public class ObjectPoolManager : MonoBehaviour
         go.SetActive(true);
         return go;
     }
-    
+
     public void Return(string key, GameObject go)
     {
         if (go == null) return;
@@ -82,15 +80,15 @@ public class ObjectPoolManager : MonoBehaviour
 
         if (!_pools.TryGetValue(key, out var pool))
         {
-            Destroy(go);
+            Destroy(go); // ❗ Geçerli pool yoksa yine fallback destroy
             return;
         }
 
-        go.transform.SetParent(pool.holder); 
+        go.transform.SetParent(pool.holder);
 
         if (pool.objects.Count >= pool.maxSize)
         {
-            Destroy(go); 
+            pool.objects.Enqueue(go); // ❗ yine de pool'a al
         }
         else
         {

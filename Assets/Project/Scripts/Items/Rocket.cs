@@ -121,7 +121,12 @@ public class Rocket : Item, IChainReactionItem
         var item = GridManager.Instance.Grid[x, y];
         if (item == null || item == this)
             yield break;
+
         yield return new WaitForSeconds(0.015f);
+
+        // 🔥 Önce null olarak işaretle
+        GridManager.Instance.Grid[x, y] = null;
+
         if (item is IChainReactionItem special)
             ChainReactionManager.Instance.Enqueue(special);
         else

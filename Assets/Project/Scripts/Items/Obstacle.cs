@@ -15,6 +15,7 @@ public class Obstacle : Item
         if (!_asset.isDamageable) return; 
 
         Health--;
+        ParticleManager.Instance.PlayObstacleDamageParticle(transform.position, this._asset.key);
         if (Health <= 0)
         {
             DestroySelf();

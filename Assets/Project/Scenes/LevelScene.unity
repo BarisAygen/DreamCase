@@ -196,7 +196,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb78e6e948322422095db1e86336c1ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  particlePrefab: {fileID: 1657240347914815570, guid: c41baa32b1a8c42989a49baf19335454, type: 3}
+  cubeParticlePrefab: {fileID: 1657240347914815570, guid: c41baa32b1a8c42989a49baf19335454, type: 3}
+  rocketCreationParticlePrefab: {fileID: 1657240347914815570, guid: e0337d2dd85e644d6bc7d9c2410c8c77, type: 3}
   redMaterial: {fileID: 2100000, guid: 227d368ef827c415fbc4237588cf8657, type: 2}
   greenMaterial: {fileID: 2100000, guid: 66de771e757584b91a910ec1281ec436, type: 2}
   blueMaterial: {fileID: 2100000, guid: e596387a172434d0a88b3207bb439ce2, type: 2}

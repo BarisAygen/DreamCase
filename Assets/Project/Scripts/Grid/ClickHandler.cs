@@ -6,18 +6,13 @@ public class ClickHandler : MonoBehaviour
 
     [SerializeField] private LayerMask itemLayer;
 
-    private float tapCooldown = 0.1f;
-    private float lastTapTime = 0f;
-
     private void Start() => _cam = Camera.main;
 
     private void Update()
     {
-        if (Time.time - lastTapTime < tapCooldown || GridManager.Instance.isInputLocked) return;
+        if (GridManager.Instance.isInputLocked) return;
 
         if (!GetTapPosition(out Vector2 screenPos)) return;
-
-        lastTapTime = Time.time;
 
         Vector2 world = _cam.ScreenToWorldPoint(screenPos);
 
