@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -11,13 +12,9 @@ public class GameOverUI : MonoBehaviour
     [SerializeField] private Button retryButton;
     [SerializeField] private Button mainMenuButton;
 
-    private void Awake()
+    private void Start()
     {
         panel.SetActive(false);
-
-        nextLevelButton.onClick.AddListener(OnNextLevelClicked);
-        retryButton.onClick.AddListener(OnRetryClicked);
-        mainMenuButton.onClick.AddListener(OnMainMenuClicked);
     }
 
     private void OnEnable()
@@ -32,25 +29,26 @@ public class GameOverUI : MonoBehaviour
 
     private void HandleGameOver(bool win)
     {
-        panel.SetActive(true);
-        resultText.text = win ? "YOU WIN!" : "YOU LOSE";
+        if (!win)
+        {
+            panel.SetActive(true);
+        }
+        resultText.text = win ? "YOU WON!" : "YOU LOST";
         nextLevelButton.gameObject.SetActive(win);
         retryButton.gameObject.SetActive(!win);
     }
 
-    private void OnNextLevelClicked()
-    {
-        int lastLevel = PlayerPrefs.GetInt("LastLevel", 1);
-        PlayerPrefs.SetInt("LastLevel", lastLevel + 1);
-        SceneManager.LoadScene("LevelScene");
-    }
-
-    private void OnRetryClicked()
+    public void OnNextLevelClicked()
     {
         SceneManager.LoadScene("LevelScene");
     }
 
-    private void OnMainMenuClicked()
+    public void OnRetryClicked()
+    {
+        SceneManager.LoadScene("LevelScene");
+    }
+
+    public void OnMainMenuClicked()
     {
         SceneManager.LoadScene("MainScene");
     }

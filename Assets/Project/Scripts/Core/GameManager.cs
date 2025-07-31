@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -39,5 +40,19 @@ public class GameManager : MonoBehaviour
     private void HandleGameOver(bool won)
     {
         IsGameOver = true;
+
+        if (won)
+        {
+            int level = PlayerPrefs.GetInt("LastLevel", 1);
+            int maxLevel = LevelDataLoader.GetMaxLevel();
+            // Win animation
+            SceneManager.LoadScene("MainScene");
+
+            if (level <= maxLevel)
+            {
+                PlayerPrefs.SetInt("LastLevel", level + 1);
+                PlayerPrefs.Save();
+            }
+        }
     }
 }
