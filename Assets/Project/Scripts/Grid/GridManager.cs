@@ -14,7 +14,6 @@ public class GridManager : MonoBehaviour
     [SerializeField] private SpriteRenderer gridBackground; 
     [SerializeField] private float tileSize = 1.4f;
     [SerializeField] private float gridPadding = 0.04f;
-    public float CellSize => tileSize + gridPadding;
 
     private int _width, _height;
     public int Width => _width;
