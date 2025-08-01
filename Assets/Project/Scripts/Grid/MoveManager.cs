@@ -13,20 +13,10 @@ public class MoveManager : MonoBehaviour
         LevelUI.Instance.UpdateMoveCount(MoveCount);
     }
 
-    public bool TryConsumeMove()
+    public bool ConsumeMove()
     {
         MoveCount--;
         LevelUI.Instance.UpdateMoveCount(MoveCount);
-
-        if (GoalManager.Instance.AreAllGoalsCompleted())
-        {
-            GameEventManager.GameOver(true);
-        }
-        else if (MoveCount <= 0)
-        {
-            GameEventManager.GameOver(false);
-        }
-
         return true;
     }
 }

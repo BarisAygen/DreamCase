@@ -87,7 +87,7 @@ public class GridManager : MonoBehaviour
 
         isInputLocked = true;
         
-        if (GameManager.Instance.MoveManager.TryConsumeMove())
+        if (GameManager.Instance.MoveManager.ConsumeMove())
         {
             if (!ActionTracker.Instance.HasPendingActions())
             {
@@ -120,6 +120,16 @@ public class GridManager : MonoBehaviour
         yield return StartCoroutine(GameManager.Instance.PhysicsService.RefillAndApplyGravity());
         GameManager.Instance.HintService.ApplyHints(_grid);
         isInputLocked = false;
+        
+        if (GoalManager.Instance.AreAllGoalsCompleted())
+        {
+            GameEventManager.GameOver(true);
+        }
+        else if (MoveManager.Instance.MoveCount <= 0)
+        {
+            GameEventManager.GameOver(false);
+        }
+
     }
     
     public void DamageObstaclesAroundGroup(List<Cube> group)
