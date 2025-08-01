@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Rocket : Item, IChainReactionItem
@@ -51,21 +52,17 @@ public class Rocket : Item, IChainReactionItem
         if (spriteRenderer != null)
             spriteRenderer.enabled = false;
 
-        // 💣 Combo kontrolü
-        bool triggeredCombo = false;
-        Vector2Int[] dirs = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
-        foreach (var dir in dirs)
+        // 🔗 Tüm bağlı roketleri bul
+        var connectedRockets = GetConnectedRockets();
+        bool triggeredCombo = connectedRockets.Count > 1;
+
+        // 🔥 Diğer roketleri kuyruğa al
+        foreach (var rocket in connectedRockets)
         {
-            int nx = GridX + dir.x;
-            int ny = GridY + dir.y;
-            if (GridManager.Instance.IsInsideGrid(nx, ny))
+            if (rocket != this)
             {
-                var neighbor = GridManager.Instance.Grid[nx, ny];
-                if (neighbor is Rocket r && r != this)
-                {
-                    triggeredCombo = true;
-                    break;
-                }
+                GridManager.Instance.Grid[rocket.GridX, rocket.GridY] = null;
+                ChainReactionManager.Instance.Enqueue(rocket);
             }
         }
 
@@ -140,9 +137,7 @@ public class Rocket : Item, IChainReactionItem
         }
 
         yield return new WaitForSeconds(waveDelay);
-
-        // 🔚 En sonda kendini yok et
-        DestroySelf();
+        DestroySelf(); // 💀 En sonda kendini yok et
     }
 
     private IEnumerator TryDestroy(int x, int y)
@@ -172,5 +167,40 @@ public class Rocket : Item, IChainReactionItem
             GridManager.Instance.Grid[x, y] = null;
             item.DestroySelf();
         }
+    }
+
+    private List<Rocket> GetConnectedRockets()
+    {
+        List<Rocket> connected = new();
+        HashSet<Rocket> visited = new();
+        Queue<Rocket> queue = new();
+
+        queue.Enqueue(this);
+        visited.Add(this);
+
+        while (queue.Count > 0)
+        {
+            var current = queue.Dequeue();
+            connected.Add(current);
+
+            Vector2Int[] dirs = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
+            foreach (var dir in dirs)
+            {
+                int nx = current.GridX + dir.x;
+                int ny = current.GridY + dir.y;
+
+                if (GridManager.Instance.IsInsideGrid(nx, ny))
+                {
+                    var neighbor = GridManager.Instance.Grid[nx, ny];
+                    if (neighbor is Rocket neighborRocket && !visited.Contains(neighborRocket))
+                    {
+                        visited.Add(neighborRocket);
+                        queue.Enqueue(neighborRocket);
+                    }
+                }
+            }
+        }
+
+        return connected;
     }
 }
