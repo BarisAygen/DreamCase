@@ -176,9 +176,8 @@ public class ParticleManager : MonoBehaviour
         shard.SetActive(true);
 
         // 🎯 Efektleri instantiate edip shard altına bağlıyoruz
-        AttachParticleEffectToShard(shard, "rocketTrialEffect");
-        AttachParticleEffectToShard(shard, "rocketTrialSmoke");
-
+        AttachParticleEffectToShard(shard, "rocketTrialEffect", direction);
+        AttachParticleEffectToShard(shard, "rocketTrialSmoke", direction);
         float step = GridManager.Instance.CellSize;
         Vector3 endPos = startPos + (Vector3)((Vector2)direction * travelCount * step);
         float speed = 18f;
@@ -189,19 +188,22 @@ public class ParticleManager : MonoBehaviour
             .SetEase(Ease.Linear)
             .OnComplete(() => ObjectPoolManager.Instance.Return("rocketShard", shard));
     }
-    private void AttachParticleEffectToShard(GameObject shard, string poolKey)
+    private void AttachParticleEffectToShard(GameObject shard, string poolKey, Vector2Int direction)
     {
         var go = ObjectPoolManager.Instance.Get(poolKey);
         if (go == null) return;
 
         go.transform.SetParent(shard.transform);
         go.transform.localPosition = new Vector3(0f, -0.4f, 0f); 
+
+        // 🔄 Particle'ın da yönünü değiştiriyoruz
+        go.transform.localRotation = Quaternion.Euler(0, 0, DirectionToZ(direction));
+
         go.SetActive(true);
 
         var ps = go.GetComponent<ParticleSystem>();
         ps.Play();
 
-        // otomatik geri gönderme
         StartCoroutine(DisableAfterParticle(ps, poolKey, go));
     }
 

@@ -14,6 +14,12 @@ public class Rocket : Item, IChainReactionItem
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
+    private void OnEnable()
+    {
+        if (spriteRenderer != null)
+            spriteRenderer.enabled = true;
+    }
+
     public override void Initialize(ItemAsset asset, int x, int y)
     {
         base.Initialize(asset, x, y);
@@ -29,7 +35,7 @@ public class Rocket : Item, IChainReactionItem
 
     public IEnumerator ExecuteEffectSequence()
     {
-        // 🚀 Shard prefab'ına bağlı efektli parçacık
+        // 🚀 Shard efektleri
         if (_asset.isVerticalRocket)
         {
             ParticleManager.Instance.SpawnRocketShardWithEffects(transform.position, Vector2Int.up, GridManager.Instance.Height - GridY - 1);
@@ -41,10 +47,11 @@ public class Rocket : Item, IChainReactionItem
             ParticleManager.Instance.SpawnRocketShardWithEffects(transform.position, Vector2Int.left, GridX);
         }
 
-        // 🚫 Roket sprite'ını anında yok et
-        DestroySelf();
+        // 🕶️ Sprite'ı gizle ama GameObject aktif kalsın
+        if (spriteRenderer != null)
+            spriteRenderer.enabled = false;
 
-        // 💣 Combo mu?
+        // 💣 Combo kontrolü
         bool triggeredCombo = false;
         Vector2Int[] dirs = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
         foreach (var dir in dirs)
@@ -133,6 +140,9 @@ public class Rocket : Item, IChainReactionItem
         }
 
         yield return new WaitForSeconds(waveDelay);
+
+        // 🔚 En sonda kendini yok et
+        DestroySelf();
     }
 
     private IEnumerator TryDestroy(int x, int y)
