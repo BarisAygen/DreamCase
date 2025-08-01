@@ -24,4 +24,4 @@ MonoBehaviour:
   isDamageable: 0
   canFall: 1
   isVerticalRocket: 0
-  PoolSize: 50
+  PoolSize: 100

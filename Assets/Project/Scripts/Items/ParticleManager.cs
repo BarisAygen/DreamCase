@@ -8,6 +8,7 @@ public class ParticleManager : MonoBehaviour
 
     [SerializeField] private GameObject cubeParticlePrefab;
     [SerializeField] private GameObject rocketCreationParticlePrefab;
+    [SerializeField] private GameObject winingEffectParent;
 
     [Header("Cube Materials")]
     [SerializeField] private Material redMaterial;
@@ -26,6 +27,9 @@ public class ParticleManager : MonoBehaviour
     [Header("Rocket Trial Effects")]
     [SerializeField] private GameObject rocketTrialEffectPrefab;
     [SerializeField] private GameObject rocketTrialSmokePrefab;
+    
+    [Header("Winning Effect")]
+    [SerializeField] private GameObject winningEffectPrefab;
 
     private void Awake()
     {
@@ -221,5 +225,21 @@ public class ParticleManager : MonoBehaviour
         if (dir == Vector2Int.left)  return  90f;
         if (dir == Vector2Int.right) return -90f;
         return 0f;
+    }
+    
+    public void PlayWinningEffect()
+    {
+        if (winningEffectPrefab == null || winingEffectParent == null)
+            return;
+
+        GameObject fx = Instantiate(winningEffectPrefab, winingEffectParent.transform.position, Quaternion.identity);
+        fx.transform.SetParent(winingEffectParent.transform); 
+
+        var ps = fx.GetComponent<ParticleSystem>();
+        if (ps != null)
+            ps.Play();
+
+        // Efektin otomatik silinmesi için
+        Destroy(fx, ps.main.duration + ps.main.startLifetime.constantMax);
     }
 }

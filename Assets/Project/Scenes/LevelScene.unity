@@ -198,6 +198,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cubeParticlePrefab: {fileID: 1657240347914815570, guid: c41baa32b1a8c42989a49baf19335454, type: 3}
   rocketCreationParticlePrefab: {fileID: 1657240347914815570, guid: e0337d2dd85e644d6bc7d9c2410c8c77, type: 3}
+  winingEffectParent: {fileID: 1411956746}
   redMaterial: {fileID: 2100000, guid: 227d368ef827c415fbc4237588cf8657, type: 2}
   greenMaterial: {fileID: 2100000, guid: 66de771e757584b91a910ec1281ec436, type: 2}
   blueMaterial: {fileID: 2100000, guid: e596387a172434d0a88b3207bb439ce2, type: 2}
@@ -208,6 +209,7 @@ MonoBehaviour:
   rocketShardPrefab: {fileID: 9095915637695277150, guid: 7900a8a7a0c5541d18f8dbe294b9580e, type: 3}
   rocketTrialEffectPrefab: {fileID: 1657240347914815570, guid: bc703d1d3c09644369fecf064608ca58, type: 3}
   rocketTrialSmokePrefab: {fileID: 1657240347914815570, guid: e45f94c71035549ae8ccc8e537aeb010, type: 3}
+  winningEffectPrefab: {fileID: 1657240347914815570, guid: bdf7b885096fd44bd953663917e4f561, type: 3}
 --- !u!1 &92752644
 GameObject:
   m_ObjectHideFlags: 0
@@ -2754,6 +2756,37 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1411956746
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1411956747}
+  m_Layer: 0
+  m_Name: WinningEffectParent
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1411956747
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1411956746}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -12, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1414540330
 GameObject:
   m_ObjectHideFlags: 0
@@ -2802,6 +2835,8 @@ MonoBehaviour:
   resultText: {fileID: 1360217218}
   nextLevelButton: {fileID: 488229252}
   retryButton: {fileID: 1069974768}
+  retryButtonBackground: {fileID: 1935639917}
+  nextLevelButtonBackground: {fileID: 1790998915}
   mainMenuButton: {fileID: 1116235417}
 --- !u!1 &1424726237
 GameObject:
@@ -3200,6 +3235,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1682214539}
   - component: {fileID: 1682214540}
+  - component: {fileID: 1682214542}
+  - component: {fileID: 1682214541}
   m_Layer: 5
   m_Name: GameOver
   m_TagString: Untagged
@@ -3250,6 +3287,35 @@ Canvas:
   m_SortingLayerID: 1303345881
   m_SortingOrder: 5
   m_TargetDisplay: 0
+--- !u!114 &1682214541
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1682214538}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+--- !u!225 &1682214542
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1682214538}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1704157752
 GameObject:
   m_ObjectHideFlags: 0
@@ -4062,4 +4128,5 @@ SceneRoots:
   - {fileID: 92752648}
   - {fileID: 595014766}
   - {fileID: 506951526}
+  - {fileID: 1411956747}
   - {fileID: 1030262847}

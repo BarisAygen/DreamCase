@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -42,16 +43,24 @@ public class GameManager : MonoBehaviour
 
         if (won)
         {
+            ParticleManager.Instance.PlayWinningEffect(); 
+
             int level = PlayerPrefs.GetInt("LastLevel", 1);
             int maxLevel = LevelDataLoader.GetMaxLevel();
-            // Win animation
-            SceneManager.LoadScene("MainScene");
 
             if (level <= maxLevel)
             {
                 PlayerPrefs.SetInt("LastLevel", level + 1);
                 PlayerPrefs.Save();
             }
+
+            StartCoroutine(DelayedSceneLoad("MainScene", 3f));
         }
+    }
+    
+    private IEnumerator DelayedSceneLoad(string sceneName, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        SceneManager.LoadScene(sceneName);
     }
 }

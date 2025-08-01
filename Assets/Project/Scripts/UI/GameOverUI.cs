@@ -11,11 +11,17 @@ public class GameOverUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI resultText;
     [SerializeField] private Button nextLevelButton;
     [SerializeField] private Button retryButton;
+    [SerializeField] private GameObject retryButtonBackground;
+    [SerializeField] private GameObject nextLevelButtonBackground;
     [SerializeField] private Button mainMenuButton;
 
     private void Start()
     {
         panel.SetActive(false);
+        nextLevelButton.gameObject.SetActive(false);
+        nextLevelButtonBackground.gameObject.SetActive(false);
+        retryButton.gameObject.SetActive(false);
+        retryButtonBackground.gameObject.SetActive(false);
     }
 
     private void OnEnable()
@@ -53,7 +59,9 @@ public class GameOverUI : MonoBehaviour
 
         resultText.text = win ? "YOU WON!" : "YOU LOST";
         nextLevelButton.gameObject.SetActive(win);
+        nextLevelButtonBackground.gameObject.SetActive(win);
         retryButton.gameObject.SetActive(!win);
+        retryButtonBackground.gameObject.SetActive(!win);
     }
 
     public void OnGameOverButtonClicked()
