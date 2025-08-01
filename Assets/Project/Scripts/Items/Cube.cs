@@ -88,7 +88,7 @@ public class Cube : Item
             cube.PlayRocketCandidateAnimation_Part2(rocketPos);
         }
 
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.15f);
 
         GameManager.Instance.MatchService.RemoveGroup(GridManager.Instance.Grid, group);
 
