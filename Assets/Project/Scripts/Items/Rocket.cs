@@ -5,6 +5,10 @@ public class Rocket : Item, IChainReactionItem
 {
     private SpriteRenderer spriteRenderer;
 
+    [Header("Chain Reaction Timing")]
+    [SerializeField] private float waveDelay = 0.05f;
+    [SerializeField] private float cellDelay = 0.03f;
+
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -25,8 +29,24 @@ public class Rocket : Item, IChainReactionItem
 
     public IEnumerator ExecuteEffectSequence()
     {
+        // 🚀 Shard prefab'ına bağlı efektli parçacık
+        if (_asset.isVerticalRocket)
+        {
+            ParticleManager.Instance.SpawnRocketShardWithEffects(transform.position, Vector2Int.up, GridManager.Instance.Height - GridY - 1);
+            ParticleManager.Instance.SpawnRocketShardWithEffects(transform.position, Vector2Int.down, GridY);
+        }
+        else
+        {
+            ParticleManager.Instance.SpawnRocketShardWithEffects(transform.position, Vector2Int.right, GridManager.Instance.Width - GridX - 1);
+            ParticleManager.Instance.SpawnRocketShardWithEffects(transform.position, Vector2Int.left, GridX);
+        }
+
+        // 🚫 Roket sprite'ını anında yok et
+        DestroySelf();
+
+        // 💣 Combo mu?
         bool triggeredCombo = false;
-        Vector2Int[] dirs = new[] { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
+        Vector2Int[] dirs = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
         foreach (var dir in dirs)
         {
             int nx = GridX + dir.x;
@@ -77,7 +97,7 @@ public class Rocket : Item, IChainReactionItem
                             StartCoroutine(TryDestroy(x, yNeg));
                     }
                 }
-                yield return new WaitForSeconds(0.05f);
+                yield return new WaitForSeconds(waveDelay);
             }
         }
         else
@@ -112,8 +132,7 @@ public class Rocket : Item, IChainReactionItem
             }
         }
 
-        yield return new WaitForSeconds(0.05f);
-        DestroySelf();
+        yield return new WaitForSeconds(waveDelay);
     }
 
     private IEnumerator TryDestroy(int x, int y)
@@ -122,7 +141,7 @@ public class Rocket : Item, IChainReactionItem
         if (item == null || item == this)
             yield break;
 
-        yield return new WaitForSeconds(0.015f);
+        yield return new WaitForSeconds(cellDelay);
 
         if (item is IChainReactionItem special)
         {
@@ -134,8 +153,6 @@ public class Rocket : Item, IChainReactionItem
             if (item.TryGetComponent<Obstacle>(out var obstacle))
             {
                 obstacle.TakeDamage();
-
-                // ❗ Grid'den sadece hasar sonucu yok olmuşsa sil
                 if (obstacle.Health <= 0)
                     GridManager.Instance.Grid[x, y] = null;
             }
