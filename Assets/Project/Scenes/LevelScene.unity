@@ -202,6 +202,9 @@ MonoBehaviour:
   greenMaterial: {fileID: 2100000, guid: 66de771e757584b91a910ec1281ec436, type: 2}
   blueMaterial: {fileID: 2100000, guid: e596387a172434d0a88b3207bb439ce2, type: 2}
   yellowMaterial: {fileID: 2100000, guid: 3c4f22554c3b84dbcb3d73fe895e401d, type: 2}
+  stoneParticlePrefab: {fileID: 1657240347914815570, guid: 3936c8ba091dc4e71a47e30bd9ff5cdc, type: 3}
+  boxParticlePrefab: {fileID: 1657240347914815570, guid: 5f9505aeef97b41bc872370fa3960396, type: 3}
+  vaseParticlePrefab: {fileID: 1657240347914815570, guid: 60291a4ec91d847d19d2326c2a2c64f0, type: 3}
 --- !u!1 &92752644
 GameObject:
   m_ObjectHideFlags: 0

@@ -124,12 +124,26 @@ public class Rocket : Item, IChainReactionItem
 
         yield return new WaitForSeconds(0.015f);
 
-        // 🔥 Önce null olarak işaretle
-        GridManager.Instance.Grid[x, y] = null;
-
         if (item is IChainReactionItem special)
+        {
+            GridManager.Instance.Grid[x, y] = null;
             ChainReactionManager.Instance.Enqueue(special);
+        }
+        else if (item.Asset.type == ItemType.Obstacle)
+        {
+            if (item.TryGetComponent<Obstacle>(out var obstacle))
+            {
+                obstacle.TakeDamage();
+
+                // ❗ Grid'den sadece hasar sonucu yok olmuşsa sil
+                if (obstacle.Health <= 0)
+                    GridManager.Instance.Grid[x, y] = null;
+            }
+        }
         else
+        {
+            GridManager.Instance.Grid[x, y] = null;
             item.DestroySelf();
+        }
     }
 }

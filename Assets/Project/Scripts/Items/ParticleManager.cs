@@ -13,10 +13,11 @@ public class ParticleManager : MonoBehaviour
     [SerializeField] private Material greenMaterial;
     [SerializeField] private Material blueMaterial;
     [SerializeField] private Material yellowMaterial;
-    [Header("Obstacle Materials")]
-    [SerializeField] private Material stoneMaterial;
-    [SerializeField] private Material boxMaterial;
-    [SerializeField] private Material vaseMaterial;
+
+    [Header("Obstacle Damage Particles")]
+    [SerializeField] private GameObject stoneParticlePrefab;
+    [SerializeField] private GameObject boxParticlePrefab;
+    [SerializeField] private GameObject vaseParticlePrefab;
 
     private void Awake()
     {
@@ -27,13 +28,17 @@ public class ParticleManager : MonoBehaviour
     {
         ObjectPoolManager.Instance.WarmPool("cubeParticle", cubeParticlePrefab, 20);
         ObjectPoolManager.Instance.WarmPool("rocketCreationParticle", rocketCreationParticlePrefab, 10);
+
+        ObjectPoolManager.Instance.WarmPool("stoneParticle", stoneParticlePrefab, 5);
+        ObjectPoolManager.Instance.WarmPool("boxParticle", boxParticlePrefab, 5);
+        ObjectPoolManager.Instance.WarmPool("vaseParticle", vaseParticlePrefab, 5);
     }
 
     public void PlayCubeParticle(Vector3 pos, Material mat)
     {
         StartCoroutine(SpawnCubeParticle(pos, mat));
     }
-    
+
     public void PlayRocketCreationParticleFollow(GameObject target)
     {
         StartCoroutine(SpawnRocketParticleAttached(target));
@@ -44,7 +49,6 @@ public class ParticleManager : MonoBehaviour
         GameObject go = ObjectPoolManager.Instance.Get("rocketCreationParticle");
         if (go == null || target == null) yield break;
 
-        // Efekti rocket'ın altına yerleştir
         go.transform.SetParent(target.transform);
         go.transform.localPosition = Vector3.zero;
 
@@ -53,7 +57,6 @@ public class ParticleManager : MonoBehaviour
 
         yield return new WaitForSeconds(ps.main.duration + ps.main.startLifetime.constantMax);
 
-        // Efekti serbest bırak ve havuza geri dön
         go.transform.SetParent(null);
         ObjectPoolManager.Instance.Return("rocketCreationParticle", go);
     }
@@ -66,10 +69,6 @@ public class ParticleManager : MonoBehaviour
             "g" => greenMaterial,
             "b" => blueMaterial,
             "y" => yellowMaterial,
-            "s" => stoneMaterial,
-            "bo" => boxMaterial,
-            "v" => vaseMaterial,
-
             _ => null
         };
     }
@@ -100,20 +99,39 @@ public class ParticleManager : MonoBehaviour
         go.transform.position = pos;
 
         var ps = go.GetComponent<ParticleSystem>();
-
         ps.Play();
 
         yield return new WaitForSeconds(ps.main.duration + ps.main.startLifetime.constantMax);
 
         ObjectPoolManager.Instance.Return("rocketCreationParticle", go);
     }
-    
+
     public void PlayObstacleDamageParticle(Vector3 pos, string key)
     {
-        var mat = GetMaterialByKey(key);
-        if (mat != null)
+        string poolKey = key switch
         {
-            StartCoroutine(SpawnCubeParticle(pos, mat));
-        }
+            "s" => "stoneParticle",
+            "bo" => "boxParticle",
+            "v" => "vaseParticle",
+            _ => null
+        };
+
+        if (poolKey != null)
+            StartCoroutine(SpawnObstacleParticle(pos, poolKey));
+    }
+
+    private IEnumerator SpawnObstacleParticle(Vector3 pos, string poolKey)
+    {
+        GameObject go = ObjectPoolManager.Instance.Get(poolKey);
+        if (go == null) yield break;
+
+        go.transform.position = pos;
+
+        var ps = go.GetComponent<ParticleSystem>();
+        ps.Play();
+
+        yield return new WaitForSeconds(ps.main.duration + ps.main.startLifetime.constantMax);
+
+        ObjectPoolManager.Instance.Return(poolKey, go);
     }
 }
