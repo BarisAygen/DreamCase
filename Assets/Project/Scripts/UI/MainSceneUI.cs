@@ -11,15 +11,26 @@ public class MainSceneUI : MonoBehaviour
 
     [SerializeField, Tooltip("Text that shows the current level number")]
     private TextMeshProUGUI levelText;
-
+    
     private void Start()
     {
         int level = PlayerPrefs.GetInt("LastLevel", 1);
-        levelText.text = level > 10 ? "Finished" : $"Level {level}";
+        int maxLevel = LevelDataLoader.GetMaxLevel();
 
-        levelButton.onClick.AddListener(() =>
+        bool isFinished = level > maxLevel;
+        levelText.text = isFinished ? "Finished" : $"Level {level}";
+
+        levelButton.interactable = !isFinished; 
+    }
+    
+    public void OnLevelButtonClicked() 
+    {
+        int level = PlayerPrefs.GetInt("LastLevel", 1);
+        int maxLevel = LevelDataLoader.GetMaxLevel();
+
+        if (level <= maxLevel)
         {
             SceneManager.LoadScene("LevelScene");
-        });
+        }
     }
 }
