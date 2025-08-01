@@ -24,7 +24,7 @@ public class Rocket : Item, IChainReactionItem
     public override void Initialize(ItemAsset asset, int x, int y)
     {
         base.Initialize(asset, x, y);
-        if (spriteRenderer != null)
+        if (spriteRenderer is not null)
             spriteRenderer.sprite = asset.mainSprite;
     }
 
@@ -36,7 +36,6 @@ public class Rocket : Item, IChainReactionItem
 
     public IEnumerator ExecuteEffectSequence()
     {
-        // 🚀 Shard efektleri
         if (_asset.isVerticalRocket)
         {
             ParticleManager.Instance.SpawnRocketShardWithEffects(transform.position, Vector2Int.up, GridManager.Instance.Height - GridY - 1);
@@ -48,26 +47,33 @@ public class Rocket : Item, IChainReactionItem
             ParticleManager.Instance.SpawnRocketShardWithEffects(transform.position, Vector2Int.left, GridX);
         }
 
-        // 🕶️ Sprite'ı gizle ama GameObject aktif kalsın
-        if (spriteRenderer != null)
+        if (spriteRenderer is not null)
             spriteRenderer.enabled = false;
 
-        // 🔗 Tüm bağlı roketleri bul
         var connectedRockets = GetConnectedRockets();
         bool triggeredCombo = connectedRockets.Count > 1;
 
-        // 🔥 Diğer roketleri kuyruğa al
         foreach (var rocket in connectedRockets)
         {
             if (rocket != this)
             {
                 GridManager.Instance.Grid[rocket.GridX, rocket.GridY] = null;
-                ChainReactionManager.Instance.Enqueue(rocket);
+
+                if (!triggeredCombo)
+                {
+                    ChainReactionManager.Instance.Enqueue(rocket); 
+                }
+                else
+                {
+                    rocket.DestroySelf(); 
+                }
             }
         }
 
         if (triggeredCombo)
         {
+            ParticleManager.Instance.SpawnComboRocketShards(transform.position, 10);
+
             int halfSize = 1;
             int maxOffsetX = Mathf.Max(GridX, GridManager.Instance.Width - GridX - 1);
             int maxOffsetY = Mathf.Max(GridY, GridManager.Instance.Height - GridY - 1);
@@ -137,7 +143,7 @@ public class Rocket : Item, IChainReactionItem
         }
 
         yield return new WaitForSeconds(waveDelay);
-        DestroySelf(); // 💀 En sonda kendini yok et
+        DestroySelf();
     }
 
     private IEnumerator TryDestroy(int x, int y)
@@ -171,36 +177,6 @@ public class Rocket : Item, IChainReactionItem
 
     private List<Rocket> GetConnectedRockets()
     {
-        List<Rocket> connected = new();
-        HashSet<Rocket> visited = new();
-        Queue<Rocket> queue = new();
-
-        queue.Enqueue(this);
-        visited.Add(this);
-
-        while (queue.Count > 0)
-        {
-            var current = queue.Dequeue();
-            connected.Add(current);
-
-            Vector2Int[] dirs = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
-            foreach (var dir in dirs)
-            {
-                int nx = current.GridX + dir.x;
-                int ny = current.GridY + dir.y;
-
-                if (GridManager.Instance.IsInsideGrid(nx, ny))
-                {
-                    var neighbor = GridManager.Instance.Grid[nx, ny];
-                    if (neighbor is Rocket neighborRocket && !visited.Contains(neighborRocket))
-                    {
-                        visited.Add(neighborRocket);
-                        queue.Enqueue(neighborRocket);
-                    }
-                }
-            }
-        }
-
-        return connected;
+        return GridSearchUtil.FindConnectedRockets(GridManager.Instance.Grid, GridX, GridY);
     }
 }

@@ -152,6 +152,33 @@ public class ParticleManager : MonoBehaviour
         return 0f;
     }
 
+    public void SpawnComboRocketShards(Vector3 centerPos, int maxDistance)
+    {
+        Vector2Int[] directions = {
+            Vector2Int.up, Vector2Int.down,
+            Vector2Int.left, Vector2Int.right,
+            new Vector2Int(1,1), new Vector2Int(-1,1),
+            new Vector2Int(1,-1), new Vector2Int(-1,-1)
+        };
+
+        foreach (var dir in directions)
+        {
+            Vector3 shardPos = centerPos + new Vector3(dir.x, dir.y) * GridManager.Instance.CellSize;
+            Vector2Int shardDir1 = new Vector2Int(dir.x == 0 ? 1 : dir.x, 0);
+            Vector2Int shardDir2 = new Vector2Int(0, dir.y == 0 ? 1 : dir.y);
+
+            if (Mathf.Abs(dir.x) + Mathf.Abs(dir.y) == 2) // çaprazsa
+            {
+                SpawnRocketShardWithEffects(shardPos, shardDir1, maxDistance);
+                SpawnRocketShardWithEffects(shardPos, shardDir2, maxDistance);
+            }
+            else
+            {
+                SpawnRocketShardWithEffects(shardPos, dir, maxDistance);
+            }
+        }
+    }
+
     public void PlayWinningEffect()
     {
         if (winningEffectPrefab is null || winingEffectParent is null)
