@@ -74,13 +74,13 @@ public class ObjectPoolManager : MonoBehaviour
 
     public void Return(string key, GameObject go)
     {
-        if (go == null) return;
+        if (go is null) return;
 
         go.SetActive(false);
 
         if (!_pools.TryGetValue(key, out var pool))
         {
-            Destroy(go); // ❗ Geçerli pool yoksa yine fallback destroy
+            Destroy(go); 
             return;
         }
 
@@ -88,7 +88,7 @@ public class ObjectPoolManager : MonoBehaviour
 
         if (pool.objects.Count >= pool.maxSize)
         {
-            pool.objects.Enqueue(go); // ❗ yine de pool'a al
+            pool.objects.Enqueue(go); 
         }
         else
         {

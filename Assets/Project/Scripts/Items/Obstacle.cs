@@ -25,9 +25,4 @@ public class Obstacle : Item
             sr.sprite = _asset.damagedSprite;
         }
     }
-
-    public void SetHealth(int health)
-    {
-        Health = health;
-    }
 }

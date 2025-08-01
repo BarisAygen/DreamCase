@@ -36,24 +36,21 @@ public class GameOverUI : MonoBehaviour
 
     private void HandleGameOver(bool win)
     {
-        // Paneli önce sıfır scale ile aktif et
         panel.SetActive(true);
         panel.transform.localScale = Vector3.zero;
 
-        // DOTween ile büyüme animasyonu
         panel.transform
             .DOScale(Vector3.one, 0.4f)
-            .SetEase(Ease.OutBack) // yaylı açılma efekti
+            .SetEase(Ease.OutBack) 
             .OnComplete(() =>
             {
-                // 🌀 Biraz titreşim efekti
                 panel.transform.DOShakeScale(
-                    0.3f,             // duration
-                    0.1f,             // strength (amplitude)
-                    10,               // vibrato (number of shakes)
-                    90f,              // randomness (angle randomness)
-                    false,            // fadeOut
-                    ShakeRandomnessMode.Harmonic // randomnessMode
+                    0.3f,             
+                    0.1f,             
+                    10,               
+                    90f,              
+                    false,
+                    ShakeRandomnessMode.Harmonic 
                 );
             });
 

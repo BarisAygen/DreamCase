@@ -56,12 +56,12 @@ public class ParticleManager : MonoBehaviour
     private IEnumerator SpawnCubeParticle(Vector3 pos, Material mat)
     {
         var go = ObjectPoolManager.Instance.Get("cubeParticle");
-        if (go == null) yield break;
+        if (go is null) yield break;
 
         go.transform.position = pos;
         var ps = go.GetComponent<ParticleSystem>();
-        var renderer = ps.GetComponent<ParticleSystemRenderer>();
-        renderer.material = mat;
+        var renderer1 = ps.GetComponent<ParticleSystemRenderer>();
+        renderer1.material = mat;
         ps.Play();
 
         yield return new WaitForSeconds(ps.main.duration + ps.main.startLifetime.constantMax);
@@ -113,7 +113,7 @@ public class ParticleManager : MonoBehaviour
     private IEnumerator SpawnObstacleParticle(Vector3 pos, string poolKey)
     {
         var go = ObjectPoolManager.Instance.Get(poolKey);
-        if (go == null) yield break;
+        if (go is null) yield break;
 
         go.transform.position = pos;
         var ps = go.GetComponent<ParticleSystem>();
@@ -126,14 +126,14 @@ public class ParticleManager : MonoBehaviour
     public void SpawnRocketShardWithEffects(Vector3 startPos, Vector2Int direction, int travelCount)
     {
         var shard = ObjectPoolManager.Instance.Get("rocketShard");
-        if (shard == null) return;
+        if (shard is null) return;
 
         shard.transform.position = startPos;
         shard.transform.rotation = Quaternion.Euler(0, 0, DirectionToZ(direction));
         shard.SetActive(true);
 
-        float step = GridManager.Instance.CellSize;
-        Vector3 endPos = startPos + (Vector3)((Vector2)direction * travelCount * step);
+        float distance = travelCount * GridManager.Instance.CellSize;
+        Vector3 endPos = startPos + (Vector3)((Vector2)direction * distance);
         float speed = 18f;
 
         shard.transform
@@ -154,14 +154,14 @@ public class ParticleManager : MonoBehaviour
 
     public void PlayWinningEffect()
     {
-        if (winningEffectPrefab == null || winingEffectParent == null)
+        if (winningEffectPrefab is null || winingEffectParent is null)
             return;
 
         GameObject fx = Instantiate(winningEffectPrefab, winingEffectParent.transform.position, Quaternion.identity);
         fx.transform.SetParent(winingEffectParent.transform);
 
         var ps = fx.GetComponent<ParticleSystem>();
-        if (ps != null)
+        if (ps is not null)
             ps.Play();
 
         Destroy(fx, ps.main.duration + ps.main.startLifetime.constantMax);

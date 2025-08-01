@@ -18,7 +18,7 @@ public class Cube : Item
         transform.localScale = Vector3.one;
     }
 
-    public void SetSprites(Sprite normal, Sprite hint)
+    private void SetSprites(Sprite normal, Sprite hint)
     {
         normalSprite = normal;
         hintSprite = hint;
@@ -40,7 +40,6 @@ public class Cube : Item
 
         if (group.Count >= 4)
         {
-            // Artık efekt burada değil, animasyon sonunda oynatılacak
             StartCoroutine(AnimateAndConvertToRocket(group, this));
         }
         else
@@ -109,7 +108,6 @@ public class Cube : Item
 
         ActionTracker.Instance.EndAction();
 
-        // 🔥 Efekt burada tetiklenir — rocket artık oluştu ve animasyon bitti
         ParticleManager.Instance.PlayRocketCreationParticleFollow(rocket.gameObject);
     }
 
