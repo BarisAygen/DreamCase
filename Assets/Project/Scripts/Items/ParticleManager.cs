@@ -1,6 +1,6 @@
 using System.Collections;
-using DG.Tweening;
 using UnityEngine;
+using DG.Tweening;
 
 public class ParticleManager : MonoBehaviour
 {
@@ -24,9 +24,6 @@ public class ParticleManager : MonoBehaviour
     [Header("Rocket Shard")]
     [SerializeField] private GameObject rocketShardPrefab;
 
-    [Header("Rocket Trail (Combined)")]
-    [SerializeField] private GameObject rocketTrailCombinedPrefab;
-
     [Header("Winning Effect")]
     [SerializeField] private GameObject winningEffectPrefab;
 
@@ -44,7 +41,6 @@ public class ParticleManager : MonoBehaviour
         pool.WarmPool("boxParticle", boxParticlePrefab, 5);
         pool.WarmPool("vaseParticle", vaseParticlePrefab, 5);
         pool.WarmPool("rocketShard", rocketShardPrefab, 20);
-        pool.WarmPool("rocketTrailCombined", rocketTrailCombinedPrefab, 20);
     }
 
     public void PlayCubeParticle(Vector3 pos, Material mat)
@@ -136,8 +132,6 @@ public class ParticleManager : MonoBehaviour
         shard.transform.rotation = Quaternion.Euler(0, 0, DirectionToZ(direction));
         shard.SetActive(true);
 
-        AttachParticleEffectToShard(shard, "rocketTrailCombined", direction);
-
         float step = GridManager.Instance.CellSize;
         Vector3 endPos = startPos + (Vector3)((Vector2)direction * travelCount * step);
         float speed = 18f;
@@ -147,47 +141,6 @@ public class ParticleManager : MonoBehaviour
             .SetSpeedBased()
             .SetEase(Ease.Linear)
             .OnComplete(() => ObjectPoolManager.Instance.Return("rocketShard", shard));
-    }
-
-    private void AttachParticleEffectToShard(GameObject shard, string poolKey, Vector2Int direction)
-    {
-        var go = ObjectPoolManager.Instance.Get(poolKey);
-        if (go == null) return;
-
-        go.transform.SetParent(shard.transform);
-        go.transform.localPosition = GetOffsetByDirection(direction);
-        go.transform.localRotation = Quaternion.Euler(0, 0, DirectionToZ(direction));
-        go.SetActive(true);
-
-        foreach (var ps in go.GetComponentsInChildren<ParticleSystem>())
-            ps.Play();
-
-        StartCoroutine(DisableAfterParticle(go, poolKey));
-    }
-
-    private IEnumerator DisableAfterParticle(GameObject go, string poolKey)
-    {
-        float maxDuration = 0f;
-        foreach (var ps in go.GetComponentsInChildren<ParticleSystem>())
-        {
-            var m = ps.main;
-            float duration = m.duration + m.startLifetime.constantMax;
-            if (duration > maxDuration)
-                maxDuration = duration;
-        }
-
-        yield return new WaitForSeconds(maxDuration);
-        go.transform.SetParent(null);
-        ObjectPoolManager.Instance.Return(poolKey, go);
-    }
-
-    private Vector3 GetOffsetByDirection(Vector2Int dir)
-    {
-        if (dir == Vector2Int.up)    return new Vector3(0f, 0.4f, 0f);
-        if (dir == Vector2Int.down)  return new Vector3(0f, -0.4f, 0f);
-        if (dir == Vector2Int.left)  return new Vector3(-0.4f, 0f, 0f);
-        if (dir == Vector2Int.right) return new Vector3(0.4f, 0f, 0f);
-        return Vector3.zero;
     }
 
     private float DirectionToZ(Vector2Int dir)

@@ -119,6 +119,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: RocketSmokeEffect
       objectReference: {fileID: 0}
+    - target: {fileID: 3154071702200775794, guid: e45f94c71035549ae8ccc8e537aeb010, type: 3}
+      propertyPath: ShapeModule.radius.value
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3154071702200775794, guid: e45f94c71035549ae8ccc8e537aeb010, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3154071702200775794, guid: e45f94c71035549ae8ccc8e537aeb010, type: 3}
+      propertyPath: InitialModule.startSpeed.scalar
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 7742472861222948330, guid: e45f94c71035549ae8ccc8e537aeb010, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
